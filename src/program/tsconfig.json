@@ -1,0 +1,17 @@
+{
+  "extends": "@magicspace/configs/tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+
+    "types": ["node"],
+    "lib": ["esnext"],
+
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+    "rootDir": ".",
+    "outDir": "../../bld/program"
+  }
+}

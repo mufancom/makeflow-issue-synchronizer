@@ -1,0 +1,32 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "incremental-build",
+      "type": "shell",
+      "command": "node",
+      "options": {
+        "env": {
+          "TSC_WATCHFILE": "UseFsEventsWithFallbackDynamicPolling"
+        }
+      },
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--project",
+        "src/program",
+        "--watch"
+      ],
+      "isBackground": true,
+      "group": "build",
+      "problemMatcher": "$tsc-watch"
+    },
+    {
+      "label": "clean",
+      "type": "shell",
+      "command": "yarn",
+      "args": ["rimraf", "bld"],
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "makeflow-issue-synchronizer",
+  "version": "0.1.0",
+  "description": "Makeflow issue synchronizer",
+  "main": "index.js",
+  "repository": "https://github.com/makeflow/makeflow-issue-synchronizer",
+  "author": "Chengdu Mufan Technology Co., Ltd.",
+  "devDependencies": {
+    "@magicspace/configs": "^0.1.47",
+    "@magicspace/tslint-rules": "^0.1.41",
+    "@types/node": "^11.13.2",
+    "rimraf": "^2.6.3",
+    "ts-node": "^8.0.3",
+    "tslint": "^5.15.0",
+    "typescript": "^3.4.3"
+  }
+}
