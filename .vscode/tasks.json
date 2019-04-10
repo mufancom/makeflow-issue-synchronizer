@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "incremental-build",
+      "label": "build",
       "type": "shell",
       "command": "node",
       "options": {
@@ -19,6 +19,15 @@
       "isBackground": true,
       "group": "build",
       "problemMatcher": "$tsc-watch"
+    },
+    {
+      "label": "biu",
+      "type": "shell",
+      "command": "node",
+      "args": ["node_modules/biu/bld/cli.js"],
+      "isBackground": true,
+      "group": "build",
+      "problemMatcher": "$biu-typescript"
     },
     {
       "label": "clean",
