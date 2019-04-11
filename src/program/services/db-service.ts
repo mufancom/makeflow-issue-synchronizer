@@ -1,8 +1,14 @@
 import {Collection, Db, MongoClient} from 'mongodb';
 
-export const COLLECTION_NAME_DICT = {};
+import {GithubInputsDocument} from '../core';
 
-export interface DocumentTypeDict {}
+export const COLLECTION_NAME_DICT = {
+  'github-issue-synchronizer-inputs': 'github-issue-synchronizer-inputs',
+};
+
+export interface DocumentTypeDict {
+  'github-issue-synchronizer-inputs': GithubInputsDocument;
+}
 
 export interface DBServiceOptions {
   uri: string;

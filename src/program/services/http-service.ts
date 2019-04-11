@@ -4,14 +4,19 @@ import Koa from 'koa';
 import buildBodyParser from 'koa-bodyparser';
 import Router from 'koa-router';
 
-import {routeTestAPI} from '../api/test-api';
+import {routeGithubIssueSynchronizer} from '../api';
+
+import {GithubService} from './github-service';
 
 export interface HTTPServiceOptions {
   port: number;
 }
 
 export class HTTPService {
-  constructor(private server: HTTPServer) {
+  constructor(
+    private server: HTTPServer,
+    private githubService: GithubService,
+  ) {
     this.initialize();
   }
 
@@ -30,7 +35,7 @@ export class HTTPService {
   private initializeAPI(app: Koa): void {
     let apiRouter = new Router<unknown>();
 
-    routeTestAPI(apiRouter);
+    routeGithubIssueSynchronizer(this.githubService, apiRouter);
 
     app.use(apiRouter.routes());
     app.use(apiRouter.allowedMethods);

@@ -1,13 +1,15 @@
 import {createServer} from 'http';
 
 import config from './config';
-import {DBService, HTTPService} from './services';
+import {DBService, GithubService, HTTPService} from './services';
 
 export const httpServer = createServer();
 
 export const dbService = new DBService(config.mongodb);
 
-export const httpService = new HTTPService(httpServer);
+export const githubService = new GithubService(dbService);
+
+export const httpService = new HTTPService(httpServer, githubService);
 
 export const servicesReady = Promise.all([dbService.ready]);
 

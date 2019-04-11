@@ -11,6 +11,7 @@
     "@types/koa": "^2.0.48",
     "@types/koa-bodyparser": "^4.2.2",
     "@types/koa-router": "^7.0.40",
+    "@types/lodash": "^4.14.123",
     "@types/mongodb": "^3.1.22",
     "@types/node": "^11.13.2",
     "biu": "^0.2.21",
@@ -24,8 +25,10 @@
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
+    "lodash": "^4.17.11",
     "mime": "^2.4.2",
     "mongodb": "^3.2.3",
-    "node-fetch": "^2.3.0"
+    "node-fetch": "^2.3.0",
+    "tslang": "^0.1.13"
   }
 }
