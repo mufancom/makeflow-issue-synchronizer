@@ -1,0 +1,85 @@
+{
+  "name": "makeflow-github-issue-synchronizer",
+  "displayName": "Github Issue Synchronizer",
+  "description": "Github Issue Synchronizer for Makeflow",
+  "configs": [
+    {
+      "name": "github-api-url",
+      "displayName": "GitHub API URL"
+    },
+    {
+      "name": "github-token",
+      "displayName": "GitHub Token"
+    },
+    {
+      "name": "github-project-name",
+      "displayName": "Project Name"
+    }
+  ],
+  "powerTags": [
+    {
+      "name": "github-issue-synchronizer",
+      "displayName": "Github Issue Synchronizer",
+      "description": "GitHub Issue Synchronizer for Makeflow",
+      "hookBaseURL": "http://localhost:8888/github-issue-synchronizer",
+      "inputs": [
+        {
+          "name": "github-api-url",
+          "displayName": "GitHub API URL",
+          "default": {
+            "type": "app-config",
+            "configName": "github-api-url"
+          }
+        },
+        {
+          "name": "github-token",
+          "displayName": "GitHub Token",
+          "default": {
+            "type": "app-config",
+            "configName": "github-token"
+          }
+        },
+        {
+          "name": "github-project-name",
+          "displayName": "Project Name",
+          "default": {
+            "type": "app-config",
+            "configName": "github-project-name"
+          }
+        },
+        {
+          "name": "task-id",
+          "displayName": "任务编号",
+          "bind": {
+            "type": "resource-property",
+            "propertyName": "id"
+          }
+        },
+        {
+          "name": "task-stage",
+          "displayName": "任务状态",
+          "bind": {
+            "type": "resource-property",
+            "propertyName": "stage"
+          }
+        },
+        {
+          "name": "task-brief",
+          "displayName": "任务简述",
+          "bind": {
+            "type": "resource-property",
+            "propertyName": "brief"
+          }
+        },
+        {
+          "name": "task-active-nodes",
+          "displayName": "任务已激活节点",
+          "bind": {
+            "type": "resource-property",
+            "propertyName": "activeNodes"
+          }
+        }
+      ]
+    }
+  ]
+}
