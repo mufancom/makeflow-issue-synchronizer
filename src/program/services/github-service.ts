@@ -1,26 +1,15 @@
 import Octokit from '@octokit/rest';
 import _ from 'lodash';
 
-import {GithubInputsDocument, TaskStage} from '../core';
-import {recursivelyOmitUndefined} from '../utils';
+import {GitHubInputs, GitHubInputsDocument} from '../core';
 
 import {DBService} from './db-service';
 
-export interface GithubInputs {
-  githubUrl: string;
-  githubToken: string;
-  githubProjectName: string;
-  taskId: string;
-  taskStage: TaskStage;
-  taskBrief: string;
-  taskActiveNodes: string[];
-}
-
-export class GithubService {
+export class GitHubService {
   constructor(private dbService: DBService) {}
 
-  async synchronizeIssue(inputs: GithubInputs): Promise<void> {
-    let {taskId, githubUrl, githubProjectName} = inputs;
+  async synchronizeIssue(inputs: GitHubInputs): Promise<void> {
+    let {taskId, githubAPIUrl, githubProjectName} = inputs;
 
     if (!taskId) {
       return;
@@ -29,7 +18,7 @@ export class GithubService {
     let previousInputs = await this.dbService
       .collectionOfType('github-issue-synchronizer-inputs')
       .findOne({
-        githubUrl,
+        githubAPIUrl,
         githubProjectName,
         taskId,
       });
@@ -41,19 +30,20 @@ export class GithubService {
     }
   }
 
-  private async createIssue(inputs: GithubInputs): Promise<void> {
+  private async createIssue(inputs: GitHubInputs): Promise<void> {
     let {
-      githubUrl,
+      githubAPIUrl,
       githubToken,
       githubProjectName,
       taskBrief,
+      taskDescription,
       taskActiveNodes,
     } = inputs;
 
     let [owner, repository] = githubProjectName.split('/');
 
     let octokit = new Octokit({
-      baseUrl: githubUrl,
+      baseUrl: githubAPIUrl,
       auth: githubToken,
     });
 
@@ -61,6 +51,7 @@ export class GithubService {
       owner,
       repo: repository,
       title: taskBrief,
+      body: taskDescription,
       labels: taskActiveNodes,
     });
 
@@ -75,31 +66,27 @@ export class GithubService {
       .insertOne({
         issueNumber,
         ...inputs,
-      } as GithubInputsDocument);
+      } as GitHubInputsDocument);
   }
 
   private async updateIssue(
-    inputs: GithubInputs,
-    previousInputsDocument: GithubInputsDocument,
+    inputs: GitHubInputs,
+    previousInputsDocument: GitHubInputsDocument,
   ): Promise<void> {
-    let {_id, issueNumber, ...previousInputs} = previousInputsDocument;
+    let {_id, issueNumber} = previousInputsDocument;
 
     let {
-      taskBrief: previousTaskBrief,
-      taskActiveNodes: previousTaskActiveNodes,
-    } = previousInputs;
-
-    let {
-      githubUrl,
+      githubAPIUrl: githubAPIUrl,
       githubProjectName,
       githubToken,
       taskBrief,
+      taskDescription,
       taskActiveNodes,
       taskStage,
     } = inputs;
 
     let octokit = new Octokit({
-      baseUrl: githubUrl,
+      baseUrl: githubAPIUrl,
       auth: githubToken,
     });
 
@@ -108,18 +95,15 @@ export class GithubService {
     let state: 'open' | 'closed' =
       taskStage === 'in-progress' || taskStage === 'to-do' ? 'open' : 'closed';
 
-    let response = await octokit.issues.update(
-      recursivelyOmitUndefined<Octokit.IssuesUpdateParams>({
-        owner,
-        repo: repository,
-        number: issueNumber,
-        title: taskBrief !== previousTaskBrief ? taskBrief : undefined,
-        labels: !_.isEqual(taskActiveNodes, previousTaskActiveNodes)
-          ? taskActiveNodes
-          : undefined,
-        state,
-      }),
-    );
+    let response = await octokit.issues.update({
+      owner,
+      repo: repository,
+      number: issueNumber,
+      title: taskBrief,
+      body: taskDescription,
+      labels: taskActiveNodes,
+      state,
+    });
 
     if (response.status !== 200) {
       return;

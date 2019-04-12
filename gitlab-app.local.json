@@ -1,50 +1,50 @@
 {
-  "name": "makeflow-github-issue-synchronizer",
-  "displayName": "GitHub Issue Synchronizer",
-  "description": "GitHub Issue Synchronizer for Makeflow",
+  "name": "makeflow-gitlab-issue-synchronizer",
+  "displayName": "GitLab Issue Synchronizer",
+  "description": "GitLub Issue Synchronizer for Makeflow",
   "configs": [
     {
-      "name": "github-api-url",
-      "displayName": "GitHub API URL"
+      "name": "gitlab-api-url",
+      "displayName": "GitLab API URL"
     },
     {
-      "name": "github-token",
-      "displayName": "GitHub Token"
+      "name": "gitlab-token",
+      "displayName": "GitLab Token"
     },
     {
-      "name": "github-project-name",
+      "name": "gitlab-project-name",
       "displayName": "Project Name"
     }
   ],
   "powerTags": [
     {
-      "name": "github-issue-synchronizer",
-      "displayName": "GitHub Issue Synchronizer",
-      "description": "GitHub Issue Synchronizer for Makeflow",
-      "hookBaseURL": "http://localhost:8888/github-issue-synchronizer",
+      "name": "gitlab-issue-synchronizer",
+      "displayName": "GitLab Issue Synchronizer",
+      "description": "GitLab Issue Synchronizer for Makeflow",
+      "hookBaseURL": "http://localhost:8888/gitlab-issue-synchronizer",
       "inputs": [
         {
-          "name": "github-api-url",
-          "displayName": "GitHub API URL",
+          "name": "gitlab-api-url",
+          "displayName": "GitLab API URL",
           "default": {
             "type": "app-config",
-            "configName": "github-api-url"
+            "configName": "gitlab-api-url"
           }
         },
         {
-          "name": "github-token",
-          "displayName": "GitHub Token",
+          "name": "gitlab-token",
+          "displayName": "GitLab Token",
           "default": {
             "type": "app-config",
-            "configName": "github-token"
+            "configName": "gitlab-token"
           }
         },
         {
-          "name": "github-project-name",
+          "name": "gitlab-project-name",
           "displayName": "Project Name",
           "default": {
             "type": "app-config",
-            "configName": "github-project-name"
+            "configName": "gitlab-project-name"
           }
         },
         {

@@ -4,9 +4,13 @@ import Koa from 'koa';
 import buildBodyParser from 'koa-bodyparser';
 import Router from 'koa-router';
 
-import {routeGithubIssueSynchronizer} from '../api';
+import {
+  routeGitHubIssueSynchronizer,
+  routeGitLabIssueSynchronizer,
+} from '../api';
 
-import {GithubService} from './github-service';
+import {GitHubService} from './github-service';
+import {GitLabService} from './gitlab-service';
 
 export interface HTTPServiceOptions {
   port: number;
@@ -15,7 +19,8 @@ export interface HTTPServiceOptions {
 export class HTTPService {
   constructor(
     private server: HTTPServer,
-    private githubService: GithubService,
+    private githubService: GitHubService,
+    private gitlabService: GitLabService,
   ) {
     this.initialize();
   }
@@ -35,7 +40,8 @@ export class HTTPService {
   private initializeAPI(app: Koa): void {
     let apiRouter = new Router<unknown>();
 
-    routeGithubIssueSynchronizer(this.githubService, apiRouter);
+    routeGitHubIssueSynchronizer(this.githubService, apiRouter);
+    routeGitLabIssueSynchronizer(this.gitlabService, apiRouter);
 
     app.use(apiRouter.routes());
     app.use(apiRouter.allowedMethods);

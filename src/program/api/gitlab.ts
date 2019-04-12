@@ -1,16 +1,16 @@
 import Router from 'koa-router';
 import {draftToMarkdown} from 'markdown-draft-js';
 
-import {GitHubService} from '../services';
+import {GitLabService} from '../services';
 
-export function routeGitHubIssueSynchronizer(
-  gitHubService: GitHubService,
+export function routeGitLabIssueSynchronizer(
+  gitLabService: GitLabService,
   apiRouter: Router,
 ): void {
-  apiRouter.post('/github-issue-synchronizer/notify', async ctx => {
+  apiRouter.post('/gitlab-issue-synchronizer/notify', async ctx => {
     let body = ctx.request.body;
 
-    if (body.name !== 'github-issue-synchronizer') {
+    if (body.name !== 'gitlab-issue-synchronizer') {
       return;
     }
 
@@ -19,10 +19,10 @@ export function routeGitHubIssueSynchronizer(
     let descriptionObject = originalInputs['task-description'];
     let descriptionContent = descriptionObject && descriptionObject.content;
 
-    await gitHubService.synchronizeIssue({
-      githubAPIUrl: originalInputs['github-api-url'],
-      githubToken: originalInputs['github-token'],
-      githubProjectName: originalInputs['github-project-name'],
+    await gitLabService.synchronizeIssue({
+      gitlabAPIUrl: originalInputs['gitlab-api-url'],
+      gitlabToken: originalInputs['gitlab-token'],
+      gitlabProjectName: originalInputs['gitlab-project-name'],
       taskId: originalInputs['task-id'],
       taskBrief: originalInputs['task-brief'],
       taskStage: originalInputs['task-stage'],

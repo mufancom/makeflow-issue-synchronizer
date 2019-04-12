@@ -1,13 +1,15 @@
 import {Collection, Db, MongoClient} from 'mongodb';
 
-import {GithubInputsDocument} from '../core';
+import {GitHubInputsDocument, GitLabInputsDocument} from '../core';
 
 export const COLLECTION_NAME_DICT = {
   'github-issue-synchronizer-inputs': 'github-issue-synchronizer-inputs',
+  'gitlab-issue-synchronizer-inputs': 'gitlab-issue-synchronizer-inputs',
 };
 
 export interface DocumentTypeDict {
-  'github-issue-synchronizer-inputs': GithubInputsDocument;
+  'github-issue-synchronizer-inputs': GitHubInputsDocument;
+  'gitlab-issue-synchronizer-inputs': GitLabInputsDocument;
 }
 
 export interface DBServiceOptions {
