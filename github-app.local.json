@@ -80,6 +80,14 @@
           }
         },
         {
+          "name": "task-nodes",
+          "displayName": "任务节点",
+          "bind": {
+            "type": "resource-property",
+            "propertyName": "nodes"
+          }
+        },
+        {
           "name": "task-active-nodes",
           "displayName": "任务已激活节点",
           "bind": {

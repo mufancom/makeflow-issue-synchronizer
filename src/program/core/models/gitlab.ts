@@ -19,4 +19,5 @@ export interface GitLabInputs {
   taskBrief: string;
   taskDescription: string;
   taskActiveNodes: string[];
+  taskNodes: string[];
 }

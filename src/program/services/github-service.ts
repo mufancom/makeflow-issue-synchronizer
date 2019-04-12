@@ -81,6 +81,7 @@ export class GitHubService {
       githubToken,
       taskBrief,
       taskDescription,
+      taskNodes,
       taskActiveNodes,
       taskStage,
     } = inputs;
@@ -95,13 +96,30 @@ export class GitHubService {
     let state: 'open' | 'closed' =
       taskStage === 'in-progress' || taskStage === 'to-do' ? 'open' : 'closed';
 
+    let issueResponse = await octokit.issues.get({
+      owner,
+      repo: repository,
+      number: issueNumber,
+    });
+
+    if (issueResponse.status !== 200 || !issueResponse.data) {
+      return;
+    }
+
+    let issueLabelNames = [
+      ...issueResponse.data.labels
+        .map(label => label.name)
+        .filter(labelName => !taskNodes.includes(labelName)),
+      ...taskActiveNodes,
+    ];
+
     let response = await octokit.issues.update({
       owner,
       repo: repository,
       number: issueNumber,
       title: taskBrief,
       body: taskDescription,
-      labels: taskActiveNodes,
+      labels: issueLabelNames,
       state,
     });
 

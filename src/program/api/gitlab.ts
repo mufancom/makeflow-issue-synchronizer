@@ -26,6 +26,7 @@ export function routeGitLabIssueSynchronizer(
       taskId: originalInputs['task-id'],
       taskBrief: originalInputs['task-brief'],
       taskStage: originalInputs['task-stage'],
+      taskNodes: originalInputs['task-nodes'],
       taskActiveNodes: originalInputs['task-active-nodes'],
       taskDescription: descriptionContent
         ? draftToMarkdown(descriptionContent)

@@ -6,7 +6,11 @@ import {GitLabInputs, GitLabInputsDocument} from '../core';
 
 import {DBService} from './db-service';
 
-type RequestGitLabAPIMethod = 'get' | 'post' | 'put' | 'delete';
+interface GitLabAPIOptions {
+  method: 'get' | 'post' | 'put' | 'delete';
+  token: string;
+  body?: Dict<unknown> | string;
+}
 
 export class GitLabService {
   constructor(private dbService: DBService) {}
@@ -53,7 +57,11 @@ export class GitLabService {
       labels: taskActiveNodes.join(','),
     };
 
-    let response = await this.requestGitLabAPI(url, 'post', body, gitlabToken);
+    let response = await this.requestGitLabAPI(url, {
+      method: 'post',
+      token: gitlabToken,
+      body,
+    });
 
     let data = await response.json();
 
@@ -83,6 +91,7 @@ export class GitLabService {
       gitlabToken,
       taskBrief,
       taskDescription,
+      taskNodes,
       taskActiveNodes,
       taskStage,
     } = inputs;
@@ -91,6 +100,18 @@ export class GitLabService {
 
     let url = `${gitlabApiUrl}/projects/${encodedProjectName}/issues/${iid}`;
 
+    let issueResponse = await this.requestGitLabAPI(url, {
+      method: 'get',
+      token: gitlabToken,
+    });
+
+    let issue = await issueResponse.json();
+
+    let issueLabels = [
+      ...(issue.labels as string[]).filter(label => !taskNodes.includes(label)),
+      ...taskActiveNodes,
+    ];
+
     let stateEvent: 'reopen' | 'close' =
       taskStage === 'in-progress' || taskStage === 'to-do' ? 'reopen' : 'close';
 
@@ -98,12 +119,16 @@ export class GitLabService {
       id: encodedProjectName,
       issue_iid: iid,
       title: taskBrief,
-      labels: taskActiveNodes.join(','),
+      labels: issueLabels.join(','),
       description: taskDescription,
       state_event: stateEvent,
     };
 
-    let response = await this.requestGitLabAPI(url, 'put', body, gitlabToken);
+    let response = await this.requestGitLabAPI(url, {
+      method: 'put',
+      body,
+      token: gitlabToken,
+    });
 
     if (response.status !== 201) {
       return;
@@ -125,16 +150,16 @@ export class GitLabService {
 
   private async requestGitLabAPI(
     url: string,
-    method: RequestGitLabAPIMethod,
-    body: Dict<unknown>,
-    token: string,
+    {method, body, token}: GitLabAPIOptions,
   ): Promise<Response> {
-    let stringifiedBody = Object.entries(body)
-      .map(
-        ([key, value]) =>
-          `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`,
-      )
-      .join('&');
+    if (typeof body === 'object') {
+      body = Object.entries(body)
+        .map(
+          ([key, value]) =>
+            `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`,
+        )
+        .join('&');
+    }
 
     if (method === 'get') {
       url = body ? `${url}?${body}` : url;
@@ -146,7 +171,7 @@ export class GitLabService {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Private-Token': token,
       },
-      body: method !== 'get' ? stringifiedBody : undefined,
+      body: method !== 'get' ? body : undefined,
     });
 
     if (response.status === 401) {

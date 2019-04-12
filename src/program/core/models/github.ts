@@ -19,4 +19,5 @@ export interface GitHubInputs {
   taskBrief: string;
   taskDescription: string;
   taskActiveNodes: string[];
+  taskNodes: string[];
 }
