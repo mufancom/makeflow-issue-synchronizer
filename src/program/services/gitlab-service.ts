@@ -1,10 +1,10 @@
-import _ from 'lodash';
 import fetch, {Response} from 'node-fetch';
 import {Dict} from 'tslang';
 
-import {GitLabInputs, GitLabInputsDocument} from '../core';
+import {GitLabData, GitLabDataDocument} from '../core';
 
 import {DBService} from './db-service';
+import {LockService} from './lock-service';
 
 interface GitLabAPIOptions {
   method: 'get' | 'post' | 'put' | 'delete';
@@ -13,39 +13,48 @@ interface GitLabAPIOptions {
 }
 
 export class GitLabService {
-  constructor(private dbService: DBService) {}
+  constructor(private dbService: DBService, private lockService: LockService) {}
 
-  async synchronizeIssue(inputs: GitLabInputs): Promise<void> {
-    let {taskId, gitlabAPIUrl: gitlabUrl, gitlabProjectName} = inputs;
+  async synchronizeIssue(data: GitLabData): Promise<void> {
+    let {taskId, installation, gitlabAPIUrl, gitlabProjectName} = data;
 
     if (!taskId) {
       return;
     }
 
-    let previousInputs = await this.dbService
-      .collectionOfType('gitlab-issue-synchronizer-inputs')
+    let lockPath = await this.lockService.lock(
+      `gitlab-issue-synchronizer:${installation}:${taskId}:${encodeURIComponent(
+        gitlabAPIUrl,
+      )}:${encodeURIComponent(gitlabProjectName)}`,
+    );
+
+    let previousData = await this.dbService
+      .collectionOfType('gitlab-issue-synchronizer-data')
       .findOne({
-        gitlabAPIUrl: gitlabUrl,
+        installation,
+        gitlabAPIUrl,
         gitlabProjectName,
         taskId,
       });
 
-    if (previousInputs) {
-      await this.updateIssue(inputs, previousInputs);
+    if (previousData) {
+      await this.updateIssue(data, previousData);
     } else {
-      await this.createIssue(inputs);
+      await this.createIssue(data);
     }
+
+    await this.lockService.unlock(lockPath);
   }
 
-  private async createIssue(inputs: GitLabInputs): Promise<void> {
+  private async createIssue(data: GitLabData): Promise<void> {
     let {
-      gitlabAPIUrl: gitlabAPIUrl,
+      gitlabAPIUrl,
       gitlabProjectName,
       gitlabToken,
       taskBrief,
       taskDescription,
       taskActiveNodes,
-    } = inputs;
+    } = data;
 
     let encodedProjectName = encodeURIComponent(gitlabProjectName);
 
@@ -63,29 +72,30 @@ export class GitLabService {
       body,
     });
 
-    let data = await response.json();
+    let responseData = await response.json();
 
-    let issueInternalId = data.iid;
+    let issueInternalId = responseData.iid;
 
     if (response.status !== 201 || !Number.isInteger(issueInternalId)) {
       return;
     }
 
     await this.dbService
-      .collectionOfType('gitlab-issue-synchronizer-inputs')
+      .collectionOfType('gitlab-issue-synchronizer-data')
       .insertOne({
         iid: issueInternalId,
-        ...inputs,
-      } as GitLabInputsDocument);
+        ...data,
+      } as GitLabDataDocument);
   }
 
   private async updateIssue(
-    inputs: GitLabInputs,
-    previousInputsDocument: GitLabInputsDocument,
+    data: GitLabData,
+    previousDataDocument: GitLabDataDocument,
   ): Promise<void> {
-    let {_id, iid} = previousInputsDocument;
+    let {_id, iid, clock: previousClock} = previousDataDocument;
 
     let {
+      clock,
       gitlabAPIUrl: gitlabApiUrl,
       gitlabProjectName,
       gitlabToken,
@@ -94,7 +104,11 @@ export class GitLabService {
       taskNodes,
       taskActiveNodes,
       taskStage,
-    } = inputs;
+    } = data;
+
+    if (clock <= previousClock) {
+      return;
+    }
 
     let encodedProjectName = encodeURIComponent(gitlabProjectName);
 
@@ -135,14 +149,14 @@ export class GitLabService {
     }
 
     await this.dbService
-      .collectionOfType('github-issue-synchronizer-inputs')
+      .collectionOfType('github-issue-synchronizer-data')
       .updateOne(
         {
           _id,
         },
         {
           $set: {
-            ...inputs,
+            ...data,
           },
         },
       );

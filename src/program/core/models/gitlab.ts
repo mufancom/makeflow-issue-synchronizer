@@ -2,7 +2,7 @@ import {ObjectId} from 'mongodb';
 
 import {TaskStage} from './task';
 
-export interface GitLabInputsDocument extends GitLabInputs {
+export interface GitLabDataDocument extends GitLabData {
   _id: ObjectId;
   /**
    * Internal issue id for each projects.
@@ -10,11 +10,13 @@ export interface GitLabInputsDocument extends GitLabInputs {
   iid: number;
 }
 
-export interface GitLabInputs {
+export interface GitLabData {
+  installation: 0;
+  clock: number;
+  taskId: string;
   gitlabAPIUrl: string;
   gitlabToken: string;
   gitlabProjectName: string;
-  taskId: string;
   taskStage: TaskStage;
   taskBrief: string;
   taskDescription: string;

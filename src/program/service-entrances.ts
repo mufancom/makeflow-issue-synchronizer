@@ -1,15 +1,23 @@
 import {createServer} from 'http';
 
 import config from './config';
-import {DBService, GitHubService, GitLabService, HTTPService} from './services';
+import {
+  DBService,
+  GitHubService,
+  GitLabService,
+  HTTPService,
+  LockService,
+} from './services';
 
 export const httpServer = createServer();
 
 export const dbService = new DBService(config.mongodb);
 
-export const gitHubService = new GitHubService(dbService);
+export const lockService = new LockService({zookeeper: config.zookeeper});
 
-export const gitLabService = new GitLabService(dbService);
+export const gitHubService = new GitHubService(dbService, lockService);
+
+export const gitLabService = new GitLabService(dbService, lockService);
 
 export const httpService = new HTTPService(
   httpServer,

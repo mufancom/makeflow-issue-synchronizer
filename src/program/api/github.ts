@@ -8,26 +8,26 @@ export function routeGitHubIssueSynchronizer(
   apiRouter: Router,
 ): void {
   apiRouter.post('/github-issue-synchronizer/notify', async ctx => {
-    let body = ctx.request.body;
+    let {name, installation, clock, resource, inputs} = ctx.request.body;
 
-    if (body.name !== 'github-issue-synchronizer') {
+    if (name !== 'github-issue-synchronizer' || resource.type !== 'task') {
       return;
     }
 
-    let originalInputs = body.inputs;
-
-    let descriptionObject = originalInputs['task-description'];
+    let descriptionObject = inputs['task-description'];
     let descriptionContent = descriptionObject && descriptionObject.content;
 
     await gitHubService.synchronizeIssue({
-      githubAPIUrl: originalInputs['github-api-url'],
-      githubToken: originalInputs['github-token'],
-      githubProjectName: originalInputs['github-project-name'],
-      taskId: originalInputs['task-id'],
-      taskBrief: originalInputs['task-brief'],
-      taskStage: originalInputs['task-stage'],
-      taskNodes: originalInputs['task-nodes'],
-      taskActiveNodes: originalInputs['task-active-nodes'],
+      installation,
+      clock,
+      taskId: resource.id,
+      githubAPIUrl: inputs['github-api-url'],
+      githubToken: inputs['github-token'],
+      githubProjectName: inputs['github-project-name'],
+      taskBrief: inputs['task-brief'],
+      taskStage: inputs['task-stage'],
+      taskNodes: inputs['task-nodes'],
+      taskActiveNodes: inputs['task-active-nodes'],
       taskDescription: descriptionContent
         ? draftToMarkdown(descriptionContent)
         : '',

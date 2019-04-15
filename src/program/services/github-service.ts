@@ -1,36 +1,45 @@
 import Octokit from '@octokit/rest';
-import _ from 'lodash';
 
-import {GitHubInputs, GitHubInputsDocument} from '../core';
+import {GitHubData, GitHubDataDocument} from '../core';
 
 import {DBService} from './db-service';
+import {LockService} from './lock-service';
 
 export class GitHubService {
-  constructor(private dbService: DBService) {}
+  constructor(private dbService: DBService, private lockService: LockService) {}
 
-  async synchronizeIssue(inputs: GitHubInputs): Promise<void> {
-    let {taskId, githubAPIUrl, githubProjectName} = inputs;
+  async synchronizeIssue(data: GitHubData): Promise<void> {
+    let {taskId, installation, githubAPIUrl, githubProjectName} = data;
 
     if (!taskId) {
       return;
     }
 
-    let previousInputs = await this.dbService
-      .collectionOfType('github-issue-synchronizer-inputs')
+    let lockPath = await this.lockService.lock(
+      `github-issue-synchronizer:${installation}:${taskId}:${encodeURIComponent(
+        githubAPIUrl,
+      )}:${encodeURIComponent(githubProjectName)}`,
+    );
+
+    let previousData = await this.dbService
+      .collectionOfType('github-issue-synchronizer-data')
       .findOne({
+        installation,
         githubAPIUrl,
         githubProjectName,
         taskId,
       });
 
-    if (previousInputs) {
-      await this.updateIssue(inputs, previousInputs);
+    if (previousData) {
+      await this.updateIssue(data, previousData);
     } else {
-      await this.createIssue(inputs);
+      await this.createIssue(data);
     }
+
+    await this.lockService.unlock(lockPath);
   }
 
-  private async createIssue(inputs: GitHubInputs): Promise<void> {
+  private async createIssue(data: GitHubData): Promise<void> {
     let {
       githubAPIUrl,
       githubToken,
@@ -38,7 +47,7 @@ export class GitHubService {
       taskBrief,
       taskDescription,
       taskActiveNodes,
-    } = inputs;
+    } = data;
 
     let [owner, repository] = githubProjectName.split('/');
 
@@ -62,20 +71,21 @@ export class GitHubService {
     }
 
     await this.dbService
-      .collectionOfType('github-issue-synchronizer-inputs')
+      .collectionOfType('github-issue-synchronizer-data')
       .insertOne({
         issueNumber,
-        ...inputs,
-      } as GitHubInputsDocument);
+        ...data,
+      } as GitHubDataDocument);
   }
 
   private async updateIssue(
-    inputs: GitHubInputs,
-    previousInputsDocument: GitHubInputsDocument,
+    data: GitHubData,
+    previousDataDocument: GitHubDataDocument,
   ): Promise<void> {
-    let {_id, issueNumber} = previousInputsDocument;
+    let {_id, issueNumber, clock: previousClock} = previousDataDocument;
 
     let {
+      clock,
       githubAPIUrl: githubAPIUrl,
       githubProjectName,
       githubToken,
@@ -84,7 +94,11 @@ export class GitHubService {
       taskNodes,
       taskActiveNodes,
       taskStage,
-    } = inputs;
+    } = data;
+
+    if (clock <= previousClock) {
+      return;
+    }
 
     let octokit = new Octokit({
       baseUrl: githubAPIUrl,
@@ -128,14 +142,14 @@ export class GitHubService {
     }
 
     await this.dbService
-      .collectionOfType('github-issue-synchronizer-inputs')
+      .collectionOfType('github-issue-synchronizer-data')
       .updateOne(
         {
           _id,
         },
         {
           $set: {
-            ...inputs,
+            ...data,
           },
         },
       );

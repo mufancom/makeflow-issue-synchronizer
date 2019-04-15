@@ -8,26 +8,26 @@ export function routeGitLabIssueSynchronizer(
   apiRouter: Router,
 ): void {
   apiRouter.post('/gitlab-issue-synchronizer/notify', async ctx => {
-    let body = ctx.request.body;
+    let {name, installation, clock, resource, inputs} = ctx.request.body;
 
-    if (body.name !== 'gitlab-issue-synchronizer') {
+    if (name !== 'gitlab-issue-synchronizer' || resource.type !== 'task') {
       return;
     }
 
-    let originalInputs = body.inputs;
-
-    let descriptionObject = originalInputs['task-description'];
+    let descriptionObject = inputs['task-description'];
     let descriptionContent = descriptionObject && descriptionObject.content;
 
     await gitLabService.synchronizeIssue({
-      gitlabAPIUrl: originalInputs['gitlab-api-url'],
-      gitlabToken: originalInputs['gitlab-token'],
-      gitlabProjectName: originalInputs['gitlab-project-name'],
-      taskId: originalInputs['task-id'],
-      taskBrief: originalInputs['task-brief'],
-      taskStage: originalInputs['task-stage'],
-      taskNodes: originalInputs['task-nodes'],
-      taskActiveNodes: originalInputs['task-active-nodes'],
+      installation,
+      clock,
+      taskId: resource.id,
+      gitlabAPIUrl: inputs['gitlab-api-url'],
+      gitlabToken: inputs['gitlab-token'],
+      gitlabProjectName: inputs['gitlab-project-name'],
+      taskBrief: inputs['task-brief'],
+      taskStage: inputs['task-stage'],
+      taskNodes: inputs['task-nodes'],
+      taskActiveNodes: inputs['task-active-nodes'],
       taskDescription: descriptionContent
         ? draftToMarkdown(descriptionContent)
         : '',

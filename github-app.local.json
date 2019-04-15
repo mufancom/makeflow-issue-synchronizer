@@ -48,14 +48,6 @@
           }
         },
         {
-          "name": "task-id",
-          "displayName": "任务编号",
-          "bind": {
-            "type": "resource-property",
-            "propertyName": "id"
-          }
-        },
-        {
           "name": "task-stage",
           "displayName": "任务状态",
           "bind": {

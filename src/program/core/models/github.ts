@@ -2,7 +2,7 @@ import {ObjectId} from 'mongodb';
 
 import {TaskStage} from './task';
 
-export interface GitHubInputsDocument extends GitHubInputs {
+export interface GitHubDataDocument extends GitHubData {
   _id: ObjectId;
   /**
    * The numeric id of each repositories.
@@ -10,11 +10,13 @@ export interface GitHubInputsDocument extends GitHubInputs {
   issueNumber: number;
 }
 
-export interface GitHubInputs {
+export interface GitHubData {
+  installation: string;
+  clock: number;
+  taskId: string;
   githubAPIUrl: string;
   githubToken: string;
   githubProjectName: string;
-  taskId: string;
   taskStage: TaskStage;
   taskBrief: string;
   taskDescription: string;
