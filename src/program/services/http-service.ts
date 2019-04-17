@@ -9,19 +9,14 @@ import {
   routeGitLabIssueSynchronizer,
 } from '../api';
 
-import {GitHubService} from './github-service';
-import {GitLabService} from './gitlab-service';
+import {IssueService} from './issue';
 
 export interface HTTPServiceOptions {
   port: number;
 }
 
 export class HTTPService {
-  constructor(
-    private server: HTTPServer,
-    private githubService: GitHubService,
-    private gitlabService: GitLabService,
-  ) {
+  constructor(private server: HTTPServer, private issueService: IssueService) {
     this.initialize();
   }
 
@@ -40,8 +35,8 @@ export class HTTPService {
   private initializeAPI(app: Koa): void {
     let apiRouter = new Router<unknown>();
 
-    routeGitHubIssueSynchronizer(this.githubService, apiRouter);
-    routeGitLabIssueSynchronizer(this.gitlabService, apiRouter);
+    routeGitHubIssueSynchronizer(this.issueService, apiRouter);
+    routeGitLabIssueSynchronizer(this.issueService, apiRouter);
 
     app.use(apiRouter.routes());
     app.use(apiRouter.allowedMethods);

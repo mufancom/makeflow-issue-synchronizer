@@ -1,38 +1,34 @@
 import Router from 'koa-router';
-import {draftToMarkdown} from 'markdown-draft-js';
 
-import {GitLabService} from '../services';
+import {ExpectedError} from '../core';
+import {IssueService} from '../services';
 
 export function routeGitLabIssueSynchronizer(
-  gitLabService: GitLabService,
+  issueService: IssueService,
   apiRouter: Router,
 ): void {
   apiRouter.post('/gitlab-issue-synchronizer/notify', async ctx => {
-    let {name, installation, clock, resource, inputs} = ctx.request.body;
+    let {name, config: configId, clock, resource, inputs} = ctx.request.body;
 
     if (name !== 'gitlab-issue-synchronizer' || resource.type !== 'task') {
-      return;
+      throw new ExpectedError('Input is not match expected.');
     }
 
-    let descriptionObject = inputs['task-description'];
-    let descriptionContent = descriptionObject && descriptionObject.content;
-
-    await gitLabService.synchronizeIssue({
-      installation,
+    ctx.body = await issueService.synchronizeIssue({
       clock,
-      taskId: resource.id,
-      gitlabAPIUrl: inputs['gitlab-api-url'],
-      gitlabToken: inputs['gitlab-token'],
-      gitlabProjectName: inputs['gitlab-project-name'],
+      task: resource.id,
+      config: configId,
+      providerOptions: {
+        type: 'gitlab',
+        gitlabURL: inputs['gitlab-url'],
+        gitlabToken: inputs['gitlab-token'],
+        gitlabProjectName: inputs['gitlab-project-name'],
+      },
       taskBrief: inputs['task-brief'],
       taskStage: inputs['task-stage'],
-      taskNodes: inputs['task-nodes'],
-      taskActiveNodes: inputs['task-active-nodes'],
-      taskDescription: descriptionContent
-        ? draftToMarkdown(descriptionContent)
-        : '',
+      taskNonDoneActiveNodes: inputs['task-non-done-active-nodes'],
+      taskDescription: inputs['task-description'],
+      taskTags: inputs['task-tags'],
     });
-
-    ctx.body = {};
   });
 }

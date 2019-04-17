@@ -4,8 +4,8 @@
   "description": "GitLub Issue Synchronizer for Makeflow",
   "configs": [
     {
-      "name": "gitlab-api-url",
-      "displayName": "GitLab API URL"
+      "name": "gitlab-url",
+      "displayName": "GitLab URL"
     },
     {
       "name": "gitlab-token",
@@ -24,11 +24,11 @@
       "hookBaseURL": "http://localhost:8888/gitlab-issue-synchronizer",
       "inputs": [
         {
-          "name": "gitlab-api-url",
-          "displayName": "GitLab API URL",
+          "name": "gitlab-url",
+          "displayName": "GitLab URL",
           "default": {
             "type": "app-config",
-            "configName": "gitlab-api-url"
+            "configName": "gitlab-url"
           }
         },
         {
@@ -72,19 +72,19 @@
           }
         },
         {
-          "name": "task-nodes",
-          "displayName": "任务节点",
+          "name": "task-tags",
+          "displayName": "任务标签",
           "bind": {
             "type": "resource-property",
-            "propertyName": "nodes"
+            "propertyName": "tags"
           }
         },
         {
-          "name": "task-active-nodes",
-          "displayName": "任务已激活节点",
+          "name": "task-non-done-active-nodes",
+          "displayName": "任务未完成的已激活节点",
           "bind": {
             "type": "resource-property",
-            "propertyName": "activeNodes"
+            "propertyName": "nonDoneActiveNodes"
           }
         }
       ]

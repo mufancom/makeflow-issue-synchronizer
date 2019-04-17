@@ -1,38 +1,38 @@
 import Router from 'koa-router';
-import {draftToMarkdown} from 'markdown-draft-js';
 
-import {GitHubService} from '../services';
+import {ExpectedError} from '../core';
+import {IssueService} from '../services';
+import {response} from '../utils';
 
 export function routeGitHubIssueSynchronizer(
-  gitHubService: GitHubService,
+  issueService: IssueService,
   apiRouter: Router,
 ): void {
-  apiRouter.post('/github-issue-synchronizer/notify', async ctx => {
-    let {name, installation, clock, resource, inputs} = ctx.request.body;
+  apiRouter.post(
+    '/github-issue-synchronizer/notify',
+    response(async ctx => {
+      let {name, config: configId, clock, resource, inputs} = ctx.request.body;
 
-    if (name !== 'github-issue-synchronizer' || resource.type !== 'task') {
-      return;
-    }
+      if (name !== 'github-issue-synchronizer' || resource.type !== 'task') {
+        throw new ExpectedError('Input is not match expected.');
+      }
 
-    let descriptionObject = inputs['task-description'];
-    let descriptionContent = descriptionObject && descriptionObject.content;
-
-    await gitHubService.synchronizeIssue({
-      installation,
-      clock,
-      taskId: resource.id,
-      githubAPIUrl: inputs['github-api-url'],
-      githubToken: inputs['github-token'],
-      githubProjectName: inputs['github-project-name'],
-      taskBrief: inputs['task-brief'],
-      taskStage: inputs['task-stage'],
-      taskNodes: inputs['task-nodes'],
-      taskActiveNodes: inputs['task-active-nodes'],
-      taskDescription: descriptionContent
-        ? draftToMarkdown(descriptionContent)
-        : '',
-    });
-
-    ctx.body = {};
-  });
+      await issueService.synchronizeIssue({
+        clock,
+        task: resource.id,
+        config: configId,
+        providerOptions: {
+          type: 'github',
+          githubAPIURL: inputs['github-api-url'],
+          githubToken: inputs['github-token'],
+          githubProjectName: inputs['github-project-name'],
+        },
+        taskBrief: inputs['task-brief'],
+        taskStage: inputs['task-stage'],
+        taskNonDoneActiveNodes: inputs['task-non-done-active-nodes'],
+        taskDescription: inputs['task-description'],
+        taskTags: inputs['task-tags'],
+      });
+    }),
+  );
 }
