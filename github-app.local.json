@@ -5,7 +5,7 @@
   "configs": [
     {
       "name": "github-api-url",
-      "displayName": "GitHub API URL"
+      "displayName": "GitHub API 地址"
     },
     {
       "name": "github-token",
@@ -13,7 +13,15 @@
     },
     {
       "name": "github-project-name",
-      "displayName": "Project Name"
+      "displayName": "项目名 (owner/repository)"
+    },
+    {
+      "name": "sync-tags",
+      "displayName": "同步标签列表 (用 ',' 分隔, '*' 表示全部同步, '#' 表示不同步)"
+    },
+    {
+      "name": "sync-stage-tags",
+      "displayName": "是否同步任务阶段标签 ('#' 为不同步)"
     }
   ],
   "powerTags": [
@@ -25,7 +33,7 @@
       "inputs": [
         {
           "name": "github-api-url",
-          "displayName": "GitHub API URL",
+          "displayName": "GitHub API 地址",
           "default": {
             "type": "app-config",
             "configName": "github-api-url"
@@ -41,10 +49,26 @@
         },
         {
           "name": "github-project-name",
-          "displayName": "Project Name",
+          "displayName": "项目名 (owner/repository)",
           "default": {
             "type": "app-config",
             "configName": "github-project-name"
+          }
+        },
+        {
+          "name": "sync-tags",
+          "displayName": "同步标签列表 (用 ',' 分隔, '*' 表示全部同步, 留空或 '#' 为不同步)",
+          "default": {
+            "type": "app-config",
+            "configName": "sync-tags"
+          }
+        },
+        {
+          "name": "sync-stage-tags",
+          "displayName": "是否同步任务阶段标签 (留空或 '#' 为不同步)",
+          "default": {
+            "type": "app-config",
+            "configName": "sync-stage-tags"
           }
         },
         {

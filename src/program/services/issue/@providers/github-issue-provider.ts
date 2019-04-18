@@ -2,11 +2,11 @@ import Octokit from '@octokit/rest';
 import {FilterQuery} from 'mongodb';
 
 import {ExpectedError, GitHubIssue, IssueDocument} from '../../../core';
-import {IIssueProvider} from '../@issue-provider';
+import {AbstractIssueProvider} from '../@issue-provider';
 
 type GitHubIssueStatus = 'open' | 'closed';
 
-export class GitHubIssueProvider implements IIssueProvider {
+export class GitHubIssueProvider extends AbstractIssueProvider {
   getLockResourceId(issue: GitHubIssue): string {
     let {config: configId, task: taskId} = issue;
 
@@ -73,12 +73,6 @@ export class GitHubIssueProvider implements IIssueProvider {
       labels: this.getLabels(issue),
       state,
     });
-  }
-
-  private getLabels(issue: GitHubIssue): string[] {
-    let {taskNonDoneActiveNodes, taskTags} = issue;
-
-    return [...taskNonDoneActiveNodes, ...taskTags.map(tag => tag.name)];
   }
 
   private getOwnerAndRepository(projectName: string): [string, string] {

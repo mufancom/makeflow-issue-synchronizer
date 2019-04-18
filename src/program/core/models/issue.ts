@@ -21,7 +21,10 @@ export interface IIssue {
   config: string;
   clock: number;
   task: string;
+  tagName: string;
   providerOptions: object;
+  syncTags: string;
+  syncStageTags: string;
   taskStage: TaskStage;
   taskBrief: string;
   taskDescription: string;

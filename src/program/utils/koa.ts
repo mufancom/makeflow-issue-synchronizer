@@ -8,10 +8,16 @@ export type APIHandler = (
 
 export function respond(handler: APIHandler): Middleware {
   return async (ctx, next): Promise<any> => {
+    ctx.status = 200;
+
     let result: APIResponse = {};
 
     try {
-      result = (await handler(ctx)) || {};
+      let handledResult = await handler(ctx);
+
+      if (handledResult) {
+        result = handledResult;
+      }
     } catch (error) {
       let resultError: APIResponseError;
 

@@ -3,7 +3,7 @@ import fetch, {Response} from 'node-fetch';
 import {Dict} from 'tslang';
 
 import {ExpectedError, GitLabIssue, IssueDocument} from '../../../core';
-import {IIssueProvider} from '../@issue-provider';
+import {AbstractIssueProvider} from '../@issue-provider';
 
 type GitlabAPIMethod = 'get' | 'post' | 'put' | 'delete';
 
@@ -15,7 +15,7 @@ interface GitLabAPIOptions {
   body?: Dict<unknown> | string;
 }
 
-export class GitLabIssueProvider implements IIssueProvider {
+export class GitLabIssueProvider extends AbstractIssueProvider {
   getLockResourceId(issue: GitLabIssue): string {
     let {config: configId, task: taskId} = issue;
 
@@ -47,7 +47,7 @@ export class GitLabIssueProvider implements IIssueProvider {
       id: encodedProjectName,
       title: taskBrief,
       description: taskDescription,
-      labels: this.getLabels(issue),
+      labels: this.getGitLabLabels(issue),
     };
 
     let response = await this.requestGitLabAPI(url, {
@@ -77,7 +77,7 @@ export class GitLabIssueProvider implements IIssueProvider {
       id: encodedProjectName,
       issue_iid: issueNumber,
       title: taskBrief,
-      labels: this.getLabels(issue),
+      labels: this.getGitLabLabels(issue),
       description: taskDescription,
       state_event: stateEvent,
     };
@@ -89,12 +89,8 @@ export class GitLabIssueProvider implements IIssueProvider {
     });
   }
 
-  private getLabels(issue: GitLabIssue): string {
-    let {taskNonDoneActiveNodes, taskTags} = issue;
-
-    return [...taskNonDoneActiveNodes, ...taskTags.map(tag => tag.name)].join(
-      ',',
-    );
+  private getGitLabLabels(issue: GitLabIssue): string {
+    return this.getLabels(issue).join(',');
   }
 
   private async requestGitLabAPI(

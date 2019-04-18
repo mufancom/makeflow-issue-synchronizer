@@ -11,7 +11,14 @@ export function routeGitLabIssueSynchronizer(
   apiRouter.post(
     '/gitlab-issue-synchronizer/notify',
     respond(async ctx => {
-      let {name, config: configId, clock, resource, inputs} = ctx.request.body;
+      let {
+        name,
+        config: configId,
+        'tag-name': tagName,
+        clock,
+        resource,
+        inputs,
+      } = ctx.request.body;
 
       if (name !== 'gitlab-issue-synchronizer') {
         throw new ExpectedError(
@@ -43,6 +50,9 @@ export function routeGitLabIssueSynchronizer(
           gitlabToken: inputs['gitlab-token'],
           gitlabProjectName: inputs['gitlab-project-name'],
         },
+        tagName,
+        syncTags: inputs['sync-tags'],
+        syncStageTags: inputs['sync-stage-tags'],
         taskBrief: inputs['task-brief'],
         taskStage: inputs['task-stage'],
         taskNonDoneActiveNodes: inputs['task-non-done-active-nodes'],
