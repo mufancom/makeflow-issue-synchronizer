@@ -17,11 +17,11 @@ export type IssueProviderOptions =
   | GitHubIssueProviderOptions
   | GitLabIssueProviderOptions;
 
-export interface Issue {
+export interface IIssue {
   config: string;
   clock: number;
   task: string;
-  providerOptions: IssueProviderOptions;
+  providerOptions: object;
   taskStage: TaskStage;
   taskBrief: string;
   taskDescription: string;

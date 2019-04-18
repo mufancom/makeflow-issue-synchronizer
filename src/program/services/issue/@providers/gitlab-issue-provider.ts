@@ -2,12 +2,7 @@ import {FilterQuery} from 'mongodb';
 import fetch, {Response} from 'node-fetch';
 import {Dict} from 'tslang';
 
-import {
-  ExpectedError,
-  GitLabIssueProviderOptions,
-  Issue,
-  IssueDocument,
-} from '../../../core';
+import {ExpectedError, GitLabIssue, IssueDocument} from '../../../core';
 import {IIssueProvider} from '../@issue-provider';
 
 type GitlabAPIMethod = 'get' | 'post' | 'put' | 'delete';
@@ -21,19 +16,16 @@ interface GitLabAPIOptions {
 }
 
 export class GitLabIssueProvider implements IIssueProvider {
-  getLockResourceId(issue: Issue): string {
+  getLockResourceId(issue: GitLabIssue): string {
     let {config: configId, task: taskId} = issue;
 
     return `issue-synchronizer:gitlab:${configId}:${taskId}`;
   }
 
-  getIssueQuery(issue: Issue): FilterQuery<IssueDocument> {
+  getIssueQuery(issue: GitLabIssue): FilterQuery<IssueDocument> {
     let {config: configId, task: taskId, providerOptions} = issue;
 
-    let {
-      gitlabURL,
-      gitlabProjectName,
-    } = providerOptions as GitLabIssueProviderOptions;
+    let {gitlabURL, gitlabProjectName} = providerOptions;
 
     return {
       config: configId,
@@ -43,14 +35,10 @@ export class GitLabIssueProvider implements IIssueProvider {
     };
   }
 
-  async createIssue(issue: Issue): Promise<number> {
+  async createIssue(issue: GitLabIssue): Promise<number> {
     let {providerOptions, taskBrief, taskDescription} = issue;
 
-    let {
-      gitlabURL,
-      gitlabProjectName,
-      gitlabToken,
-    } = providerOptions as GitLabIssueProviderOptions;
+    let {gitlabURL, gitlabProjectName, gitlabToken} = providerOptions;
 
     let encodedProjectName = encodeURIComponent(gitlabProjectName);
 
@@ -73,14 +61,10 @@ export class GitLabIssueProvider implements IIssueProvider {
     return responseData.iid as number;
   }
 
-  async updateIssue(issue: Issue, issueNumber: number): Promise<void> {
+  async updateIssue(issue: GitLabIssue, issueNumber: number): Promise<void> {
     let {providerOptions, taskBrief, taskDescription, taskStage} = issue;
 
-    let {
-      gitlabURL,
-      gitlabProjectName,
-      gitlabToken,
-    } = providerOptions as GitLabIssueProviderOptions;
+    let {gitlabURL, gitlabProjectName, gitlabToken} = providerOptions;
 
     let encodedProjectName = encodeURIComponent(gitlabProjectName);
 
@@ -105,7 +89,7 @@ export class GitLabIssueProvider implements IIssueProvider {
     });
   }
 
-  private getLabels(issue: Issue): string {
+  private getLabels(issue: GitLabIssue): string {
     let {taskNonDoneActiveNodes, taskTags} = issue;
 
     return [...taskNonDoneActiveNodes, ...taskTags.map(tag => tag.name)].join(
