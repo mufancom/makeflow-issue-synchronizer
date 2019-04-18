@@ -1,12 +1,17 @@
 import Octokit from '@octokit/rest';
 import {FilterQuery} from 'mongodb';
 
-import {GitHubIssueProviderOptions, Issue, IssueDocument} from '../../../core';
-import {IssueProvider} from '../@issue-provider';
+import {
+  ExpectedError,
+  GitHubIssueProviderOptions,
+  Issue,
+  IssueDocument,
+} from '../../../core';
+import {IIssueProvider} from '../@issue-provider';
 
 type GitHubIssueStatus = 'open' | 'closed';
 
-export class GitHubIssueProvider implements IssueProvider {
+export class GitHubIssueProvider implements IIssueProvider {
   getLockResourceId(issue: Issue): string {
     let {config: configId, task: taskId} = issue;
 
@@ -33,15 +38,15 @@ export class GitHubIssueProvider implements IssueProvider {
     let {providerOptions, taskBrief, taskDescription} = issue;
 
     let {
-      githubAPIURL: githubAPIUrl,
+      githubAPIURL,
       githubProjectName,
       githubToken,
     } = providerOptions as GitHubIssueProviderOptions;
 
-    let [owner, repository] = githubProjectName.split('/');
+    let [owner, repository] = this.getOwnerAndRepository(githubProjectName);
 
     let octokit = new Octokit({
-      baseUrl: githubAPIUrl,
+      baseUrl: githubAPIURL,
       auth: githubToken,
     });
 
@@ -70,7 +75,7 @@ export class GitHubIssueProvider implements IssueProvider {
       auth: githubToken,
     });
 
-    let [owner, repository] = githubProjectName.split('/');
+    let [owner, repository] = this.getOwnerAndRepository(githubProjectName);
 
     let state: GitHubIssueStatus =
       taskStage === 'in-progress' || taskStage === 'to-do' ? 'open' : 'closed';
@@ -90,5 +95,18 @@ export class GitHubIssueProvider implements IssueProvider {
     let {taskNonDoneActiveNodes, taskTags} = issue;
 
     return [...taskNonDoneActiveNodes, ...taskTags.map(tag => tag.name)];
+  }
+
+  private getOwnerAndRepository(projectName: string): [string, string] {
+    let [owner, repository] = projectName.split('/');
+
+    if (!owner || !repository) {
+      throw new ExpectedError(
+        'APP_CONFIG_ERROR',
+        '"github-project-name" should be provided as "owner/repository"',
+      );
+    }
+
+    return [owner, repository];
   }
 }

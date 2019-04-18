@@ -2,11 +2,11 @@ import {Issue, IssueDocument} from '../../core';
 import {DBService} from '../db-service';
 import {LockService, LockServiceZookeeperLockPath} from '../lock-service';
 
-import {IssueProvider} from './@issue-provider';
+import {IIssueProvider} from './@issue-provider';
 import {GitHubIssueProvider, GitLabIssueProvider} from './@providers';
 
 type IssueProviderDict = {
-  [K in Issue['providerOptions']['type']]: IssueProvider
+  [K in Issue['providerOptions']['type']]: IIssueProvider
 };
 
 export class IssueService {
@@ -59,8 +59,6 @@ export class IssueService {
           providerOptions,
         } as IssueDocument);
       }
-    } catch (error) {
-      throw error;
     } finally {
       if (lockPath) {
         await this.lockService.unlock(lockPath);

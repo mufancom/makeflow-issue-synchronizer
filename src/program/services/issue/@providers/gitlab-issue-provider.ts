@@ -8,7 +8,7 @@ import {
   Issue,
   IssueDocument,
 } from '../../../core';
-import {IssueProvider} from '../@issue-provider';
+import {IIssueProvider} from '../@issue-provider';
 
 type GitlabAPIMethod = 'get' | 'post' | 'put' | 'delete';
 
@@ -20,7 +20,7 @@ interface GitLabAPIOptions {
   body?: Dict<unknown> | string;
 }
 
-export class GitLabIssueProvider implements IssueProvider {
+export class GitLabIssueProvider implements IIssueProvider {
   getLockResourceId(issue: Issue): string {
     let {config: configId, task: taskId} = issue;
 
