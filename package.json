@@ -5,6 +5,13 @@
   "main": "index.js",
   "repository": "https://github.com/makeflow/makeflow-issue-synchronizer",
   "author": "Chengdu Mufan Technology Co., Ltd.",
+  "scripts": {
+    "build:program": "yarn tsc --project src/program",
+    "lint:program": "tslint --project src/program",
+    "lint-prettier": "prettier --check \"**/*.{ts,tsx,js,jsx,json,yml,md}\"",
+    "lint": "yarn lint-prettier && yarn lint:program",
+    "test": "jest"
+  },
   "devDependencies": {
     "@magicspace/configs": "^0.1.47",
     "@magicspace/tslint-rules": "^0.1.41",
@@ -17,6 +24,7 @@
     "@types/node-fetch": "^2.3.1",
     "@types/node-zookeeper-client": "^0.2.6",
     "biu": "^0.2.21",
+    "prettier": "^1.17.0",
     "rimraf": "^2.6.3",
     "ts-node": "^8.0.3",
     "tslint": "^5.15.0",
