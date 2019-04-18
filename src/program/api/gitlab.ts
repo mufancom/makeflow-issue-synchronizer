@@ -40,7 +40,7 @@ export function routeGitLabIssueSynchronizer(
         'GitLab issue synchronizer inputs',
       );
 
-      ctx.body = await issueService.synchronizeIssue({
+      await issueService.synchronizeIssue({
         clock,
         task: resource.id,
         config: configId,

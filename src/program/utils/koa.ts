@@ -8,8 +8,6 @@ export type APIHandler = (
 
 export function respond(handler: APIHandler): Middleware {
   return async (ctx, next): Promise<any> => {
-    ctx.status = 200;
-
     let result: APIResponse = {};
 
     try {

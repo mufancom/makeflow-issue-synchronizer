@@ -2,14 +2,7 @@ import {FilterQuery} from 'mongodb';
 
 import {Issue, IssueDocument} from '../../core';
 
-export interface IIssueProvider {
-  getLockResourceId(issue: Issue): string;
-  getIssueQuery(issue: Issue): FilterQuery<IssueDocument>;
-  createIssue(issue: Issue): Promise<number>;
-  updateIssue(issue: Issue, issueNumber: number): Promise<void>;
-}
-
-abstract class IssueProvider implements IIssueProvider {
+abstract class IssueProvider {
   abstract getLockResourceId(issue: Issue): string;
   abstract getIssueQuery(issue: Issue): FilterQuery<IssueDocument>;
   abstract createIssue(issue: Issue): Promise<number>;
@@ -45,5 +38,7 @@ abstract class IssueProvider implements IIssueProvider {
     );
   }
 }
+
+export interface IIssueProvider extends IssueProvider {}
 
 export const AbstractIssueProvider = IssueProvider;
