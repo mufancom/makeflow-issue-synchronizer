@@ -17,11 +17,11 @@
     },
     {
       "name": "sync-tags",
-      "displayName": "同步标签列表 (用 ',' 分隔, '*' 表示全部同步, '#' 表示不同步)"
+      "displayName": "同步标签列表 (用 ',' 分隔, '*' 表示全部同步, 'off' 表示不同步)"
     },
     {
       "name": "sync-stage-tags",
-      "displayName": "是否同步任务阶段标签 ('#' 为不同步)"
+      "displayName": "是否同步任务阶段标签 ('on' 为同步)"
     }
   ],
   "powerTags": [
@@ -57,7 +57,7 @@
         },
         {
           "name": "sync-tags",
-          "displayName": "同步标签列表 (用 ',' 分隔, '*' 表示全部同步, 留空或 '#' 为不同步)",
+          "displayName": "同步标签列表 (用 ',' 分隔, '*' 表示全部同步, 留空或 'off' 为不同步)",
           "default": {
             "type": "app-config",
             "configName": "sync-tags"
@@ -65,7 +65,7 @@
         },
         {
           "name": "sync-stage-tags",
-          "displayName": "是否同步任务阶段标签 (留空或 '#' 为不同步)",
+          "displayName": "是否同步任务阶段标签 ('on' 为同步)",
           "default": {
             "type": "app-config",
             "configName": "sync-stage-tags"

@@ -10,7 +10,7 @@ export interface IssueDocument {
   config: string;
   clock: number;
   task: string;
-  providerOptions: IssueProviderOptions;
+  options: IssueProviderOptions;
 }
 
 export type IssueProviderOptions =
@@ -22,7 +22,7 @@ export interface IIssue {
   clock: number;
   task: string;
   tagName: string;
-  providerOptions: object;
+  options: object;
   syncTags: string;
   syncStageTags: string;
   taskStage: TaskStage;

@@ -2,8 +2,10 @@ import {FilterQuery} from 'mongodb';
 import fetch, {Response} from 'node-fetch';
 import {Dict} from 'tslang';
 
-import {ExpectedError, GitLabIssue, IssueDocument} from '../../../core';
-import {AbstractIssueProvider} from '../@issue-provider';
+import {ExpectedError} from '../error';
+import {GitLabIssue, IssueDocument} from '../models';
+
+import {AbstractIssueAdapter} from './issue-adapter';
 
 type GitlabAPIMethod = 'get' | 'post' | 'put' | 'delete';
 
@@ -15,7 +17,7 @@ interface GitLabAPIOptions {
   body?: Dict<unknown> | string;
 }
 
-export class GitLabIssueProvider extends AbstractIssueProvider {
+export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
   getLockResourceId(issue: GitLabIssue): string {
     let {config: configId, task: taskId} = issue;
 
@@ -23,26 +25,27 @@ export class GitLabIssueProvider extends AbstractIssueProvider {
   }
 
   getIssueQuery(issue: GitLabIssue): FilterQuery<IssueDocument> {
-    let {config: configId, task: taskId, providerOptions} = issue;
+    let {config: configId, task: taskId, options} = issue;
 
-    let {gitlabURL, gitlabProjectName} = providerOptions;
+    let {url, projectName} = options;
 
     return {
       config: configId,
       task: taskId,
-      'providerOptions.gitlabURL': gitlabURL,
-      'providerOptions.gitlabProjectName': gitlabProjectName,
+      'options.type': 'gitlab',
+      'options.url': url,
+      'options.projectName': projectName,
     };
   }
 
   async createIssue(issue: GitLabIssue): Promise<number> {
-    let {providerOptions, taskBrief, taskDescription} = issue;
+    let {options, taskBrief, taskDescription} = issue;
 
-    let {gitlabURL, gitlabProjectName, gitlabToken} = providerOptions;
+    let {url, projectName, token} = options;
 
-    let encodedProjectName = encodeURIComponent(gitlabProjectName);
+    let encodedProjectName = encodeURIComponent(projectName);
 
-    let url = `${gitlabURL}/api/v4/projects/${encodedProjectName}/issues`;
+    let apiURL = `${url}/api/v4/projects/${encodedProjectName}/issues`;
     let body = {
       id: encodedProjectName,
       title: taskBrief,
@@ -50,9 +53,9 @@ export class GitLabIssueProvider extends AbstractIssueProvider {
       labels: this.getGitLabLabels(issue),
     };
 
-    let response = await this.requestGitLabAPI(url, {
+    let response = await this.requestGitLabAPI(apiURL, {
       method: 'post',
-      token: gitlabToken,
+      token,
       body,
     });
 
@@ -62,13 +65,13 @@ export class GitLabIssueProvider extends AbstractIssueProvider {
   }
 
   async updateIssue(issue: GitLabIssue, issueNumber: number): Promise<void> {
-    let {providerOptions, taskBrief, taskDescription, taskStage} = issue;
+    let {options, taskBrief, taskDescription, taskStage} = issue;
 
-    let {gitlabURL, gitlabProjectName, gitlabToken} = providerOptions;
+    let {url, projectName, token} = options;
 
-    let encodedProjectName = encodeURIComponent(gitlabProjectName);
+    let encodedProjectName = encodeURIComponent(projectName);
 
-    let url = `${gitlabURL}/api/v4/projects/${encodedProjectName}/issues/${issueNumber}`;
+    let apiURL = `${url}/api/v4/projects/${encodedProjectName}/issues/${issueNumber}`;
 
     let stateEvent: GitlabStateEvent =
       taskStage === 'in-progress' || taskStage === 'to-do' ? 'reopen' : 'close';
@@ -82,10 +85,10 @@ export class GitLabIssueProvider extends AbstractIssueProvider {
       state_event: stateEvent,
     };
 
-    await this.requestGitLabAPI(url, {
+    await this.requestGitLabAPI(apiURL, {
       method: 'put',
       body,
-      token: gitlabToken,
+      token,
     });
   }
 

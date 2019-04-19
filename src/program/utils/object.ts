@@ -9,7 +9,10 @@ export function checkRequiredFields(
 ): void {
   for (let field of fields) {
     if (_.get(object, field) === undefined) {
-      throw new ExpectedError(`Missing required field "${field}" for ${label}`);
+      throw new ExpectedError(
+        'MISSING_REQUIRED_FIELD',
+        `Missing required field "${field}" for ${label}`,
+      );
     }
   }
 }

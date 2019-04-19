@@ -1,41 +1,44 @@
 import Octokit from '@octokit/rest';
 import {FilterQuery} from 'mongodb';
 
-import {ExpectedError, GitHubIssue, IssueDocument} from '../../../core';
-import {AbstractIssueProvider} from '../@issue-provider';
+import {ExpectedError} from '../error';
+import {GitHubIssue, IssueDocument} from '../models';
+
+import {AbstractIssueAdapter} from './issue-adapter';
 
 type GitHubIssueStatus = 'open' | 'closed';
 
-export class GitHubIssueProvider extends AbstractIssueProvider {
-  getLockResourceId(issue: GitHubIssue): string {
-    let {config: configId, task: taskId} = issue;
-
+export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
+  getLockResourceId({config: configId, task: taskId}: GitHubIssue): string {
     return `issue-synchronizer:github:${configId}:${taskId}`;
   }
 
-  getIssueQuery(issue: GitHubIssue): FilterQuery<IssueDocument> {
-    let {config: configId, task: taskId, providerOptions} = issue;
-
-    let {githubAPIURL, githubProjectName} = providerOptions;
+  getIssueQuery({
+    config: configId,
+    task: taskId,
+    options,
+  }: GitHubIssue): FilterQuery<IssueDocument> {
+    let {apiURL, projectName} = options;
 
     return {
       config: configId,
       task: taskId,
-      'providerOptions.githubAPIURL': githubAPIURL,
-      'providerOptions.githubProjectName': githubProjectName,
+      'options.type': 'github',
+      'options.apiURL': apiURL,
+      'options.projectName': projectName,
     };
   }
 
   async createIssue(issue: GitHubIssue): Promise<number> {
-    let {providerOptions, taskBrief, taskDescription} = issue;
+    let {options, taskBrief, taskDescription} = issue;
 
-    let {githubAPIURL, githubProjectName, githubToken} = providerOptions;
+    let {apiURL, projectName, token} = options;
 
-    let [owner, repository] = this.getOwnerAndRepository(githubProjectName);
+    let [owner, repository] = this.getOwnerAndRepository(projectName);
 
     let octokit = new Octokit({
-      baseUrl: githubAPIURL,
-      auth: githubToken,
+      baseUrl: apiURL,
+      auth: token,
     });
 
     let response = await octokit.issues.create({
@@ -50,16 +53,16 @@ export class GitHubIssueProvider extends AbstractIssueProvider {
   }
 
   async updateIssue(issue: GitHubIssue, issueNumber: number): Promise<void> {
-    let {providerOptions, taskBrief, taskDescription, taskStage} = issue;
+    let {options, taskBrief, taskDescription, taskStage} = issue;
 
-    let {githubAPIURL, githubProjectName, githubToken} = providerOptions;
+    let {apiURL, projectName, token} = options;
 
     let octokit = new Octokit({
-      baseUrl: githubAPIURL,
-      auth: githubToken,
+      baseUrl: apiURL,
+      auth: token,
     });
 
-    let [owner, repository] = this.getOwnerAndRepository(githubProjectName);
+    let [owner, repository] = this.getOwnerAndRepository(projectName);
 
     let state: GitHubIssueStatus =
       taskStage === 'in-progress' || taskStage === 'to-do' ? 'open' : 'closed';

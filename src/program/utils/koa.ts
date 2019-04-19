@@ -6,7 +6,7 @@ export type APIHandler = (
   ctx: ParameterizedContext,
 ) => Promise<APIResponse | void>;
 
-export function respond(handler: APIHandler): Middleware {
+export function requestProcessor(handler: APIHandler): Middleware {
   return async (ctx, next): Promise<any> => {
     let result: APIResponse = {};
 

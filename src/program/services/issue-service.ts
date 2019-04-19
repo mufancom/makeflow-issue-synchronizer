@@ -1,18 +1,20 @@
-import {Issue, IssueDocument} from '../../core';
-import {DBService} from '../db-service';
-import {LockService, LockServiceZookeeperLockPath} from '../lock-service';
+import {
+  GitHubIssueAdapter,
+  GitLabIssueAdapter,
+  IIssueAdapter,
+  Issue,
+  IssueDocument,
+} from '../core';
 
-import {IIssueProvider} from './@issue-provider';
-import {GitHubIssueProvider, GitLabIssueProvider} from './@providers';
+import {DBService} from './db-service';
+import {LockService, LockServiceZookeeperLockPath} from './lock-service';
 
-type IssueProviderDict = {
-  [K in Issue['providerOptions']['type']]: IIssueProvider
-};
+type IssueAdapterDict = {[K in Issue['options']['type']]: IIssueAdapter};
 
 export class IssueService {
-  private issueProviderDict: IssueProviderDict = {
-    github: new GitHubIssueProvider(),
-    gitlab: new GitLabIssueProvider(),
+  private issueAdapterDict: IssueAdapterDict = {
+    github: new GitHubIssueAdapter(),
+    gitlab: new GitLabIssueAdapter(),
   };
 
   constructor(private dbService: DBService, private lockService: LockService) {}
@@ -22,10 +24,10 @@ export class IssueService {
 
     try {
       let {
-        providerOptions: {type: providerType},
+        options: {type: adapterType},
       } = issue;
 
-      let provider = this.issueProviderDict[providerType];
+      let provider = this.issueAdapterDict[adapterType];
 
       lockPath = await this.lockService.lock(provider.getLockResourceId(issue));
 
@@ -35,7 +37,7 @@ export class IssueService {
         .collectionOfType('issue')
         .findOne(query);
 
-      let {config: configId, clock, task: taskId, providerOptions} = issue;
+      let {config: configId, clock, task: taskId, options} = issue;
 
       if (issueDoc) {
         await provider.updateIssue(issue, issueDoc.issueNumber);
@@ -45,7 +47,7 @@ export class IssueService {
             config: configId,
             clock,
             task: taskId,
-            providerOptions,
+            options,
           },
         });
       } else {
@@ -56,7 +58,7 @@ export class IssueService {
           config: configId,
           clock,
           task: taskId,
-          providerOptions,
+          options,
         } as IssueDocument);
       }
     } finally {

@@ -2,7 +2,7 @@ import Router from 'koa-router';
 
 import {ExpectedError} from '../core';
 import {IssueService} from '../services';
-import {checkRequiredFields, respond} from '../utils';
+import {checkRequiredFields, requestProcessor} from '../utils';
 
 export function routeGitHubIssueSynchronizer(
   issueService: IssueService,
@@ -10,7 +10,7 @@ export function routeGitHubIssueSynchronizer(
 ): void {
   apiRouter.post(
     '/github-issue-synchronizer/notify',
-    respond(async ctx => {
+    requestProcessor(async ctx => {
       let {
         name,
         config: configId,
@@ -44,11 +44,11 @@ export function routeGitHubIssueSynchronizer(
         clock,
         task: resource.id,
         config: configId,
-        providerOptions: {
+        options: {
           type: 'github',
-          githubAPIURL: inputs['github-api-url'],
-          githubToken: inputs['github-token'],
-          githubProjectName: inputs['github-project-name'],
+          apiURL: inputs['github-api-url'],
+          token: inputs['github-token'],
+          projectName: inputs['github-project-name'],
         },
         tagName,
         syncTags: inputs['sync-tags'],

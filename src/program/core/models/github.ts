@@ -2,11 +2,11 @@ import {IIssue} from './issue';
 
 export interface GitHubIssueProviderOptions {
   type: 'github';
-  githubAPIURL: string;
-  githubToken: string;
-  githubProjectName: string;
+  apiURL: string;
+  token: string;
+  projectName: string;
 }
 
 export interface GitHubIssue extends IIssue {
-  providerOptions: GitHubIssueProviderOptions;
+  options: GitHubIssueProviderOptions;
 }

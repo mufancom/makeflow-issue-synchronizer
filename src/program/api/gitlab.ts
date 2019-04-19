@@ -2,7 +2,7 @@ import Router from 'koa-router';
 
 import {ExpectedError} from '../core';
 import {IssueService} from '../services';
-import {checkRequiredFields, respond} from '../utils';
+import {checkRequiredFields, requestProcessor} from '../utils';
 
 export function routeGitLabIssueSynchronizer(
   issueService: IssueService,
@@ -10,7 +10,7 @@ export function routeGitLabIssueSynchronizer(
 ): void {
   apiRouter.post(
     '/gitlab-issue-synchronizer/notify',
-    respond(async ctx => {
+    requestProcessor(async ctx => {
       let {
         name,
         config: configId,
@@ -44,11 +44,11 @@ export function routeGitLabIssueSynchronizer(
         clock,
         task: resource.id,
         config: configId,
-        providerOptions: {
+        options: {
           type: 'gitlab',
-          gitlabURL: inputs['gitlab-url'],
-          gitlabToken: inputs['gitlab-token'],
-          gitlabProjectName: inputs['gitlab-project-name'],
+          url: inputs['gitlab-url'],
+          token: inputs['gitlab-token'],
+          projectName: inputs['gitlab-project-name'],
         },
         tagName,
         syncTags: inputs['sync-tags'],
