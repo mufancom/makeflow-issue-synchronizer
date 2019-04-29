@@ -1,4 +1,7 @@
+import {URL} from 'url';
+
 import Octokit from '@octokit/rest';
+import escapeStringRegExp from 'escape-string-regexp';
 import {FilterQuery} from 'mongodb';
 
 import {ExpectedError} from '../error';
@@ -18,28 +21,49 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
     task: taskId,
     options,
   }: GitHubIssue): FilterQuery<IssueDocument> {
-    let {apiURL, projectName} = options;
+    let {projectName} = options;
 
     return {
       config: configId,
       task: taskId,
       'options.type': 'github',
-      'options.apiURL': apiURL,
       'options.projectName': projectName,
     };
+  }
+
+  analyzeIssueNumber(issue: GitHubIssue): number | undefined {
+    let {
+      metadata,
+      options: {url, projectName},
+    } = issue;
+
+    let ref = metadata && metadata.ref;
+
+    if (!ref || typeof ref !== 'string') {
+      return undefined;
+    }
+
+    let matchResult = new RegExp(
+      `^${escapeStringRegExp(url)}\/${escapeStringRegExp(
+        projectName,
+      )}\/issues\/(\\d+)\/?$`,
+    ).exec(ref);
+
+    if (!matchResult) {
+      return undefined;
+    }
+
+    return Number(matchResult[1]);
   }
 
   async createIssue(issue: GitHubIssue): Promise<number> {
     let {options, taskBrief, taskDescription} = issue;
 
-    let {apiURL, projectName, token} = options;
+    let {projectName} = options;
 
     let [owner, repository] = this.getOwnerAndRepository(projectName);
 
-    let octokit = new Octokit({
-      baseUrl: apiURL,
-      auth: token,
-    });
+    let octokit = this.getOctokit(issue);
 
     let response = await octokit.issues.create({
       owner,
@@ -55,12 +79,9 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
   async updateIssue(issue: GitHubIssue, issueNumber: number): Promise<void> {
     let {options, taskBrief, taskDescription, taskStage} = issue;
 
-    let {apiURL, projectName, token} = options;
+    let {projectName} = options;
 
-    let octokit = new Octokit({
-      baseUrl: apiURL,
-      auth: token,
-    });
+    let octokit = this.getOctokit(issue);
 
     let [owner, repository] = this.getOwnerAndRepository(projectName);
 
@@ -89,5 +110,23 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
     }
 
     return [owner, repository];
+  }
+
+  private getOctokit(issue: GitHubIssue): Octokit {
+    let {
+      options: {url, token},
+    } = issue;
+
+    let urlObject = new URL(url);
+    urlObject.host = `api.${urlObject.host}`;
+
+    let href = urlObject.href;
+
+    let apiBaseURL = href.substr(0, href.length - 1);
+
+    return new Octokit({
+      baseUrl: apiBaseURL,
+      auth: token,
+    });
   }
 }

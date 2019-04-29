@@ -1,4 +1,5 @@
 import {ObjectId} from 'mongodb';
+import {Dict} from 'tslang';
 
 import {GitHubIssueProviderOptions} from './github';
 import {GitLabIssueProviderOptions} from './gitlab';
@@ -30,4 +31,5 @@ export interface IIssue {
   taskDescription: string;
   taskNonDoneActiveNodes: string[];
   taskTags: TaskTag[];
+  metadata: Dict<unknown>;
 }

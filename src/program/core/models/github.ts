@@ -2,7 +2,7 @@ import {IIssue} from './issue';
 
 export interface GitHubIssueProviderOptions {
   type: 'github';
-  apiURL: string;
+  url: string;
   token: string;
   projectName: string;
 }

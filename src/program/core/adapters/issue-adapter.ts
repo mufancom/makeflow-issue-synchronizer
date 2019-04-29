@@ -11,6 +11,7 @@ abstract class IssueAdapter<TIssue extends Issue> {
   abstract getIssueQuery(issue: TIssue): FilterQuery<IssueDocument>;
   abstract createIssue(issue: TIssue): Promise<number>;
   abstract updateIssue(issue: TIssue, issueNumber: number): Promise<void>;
+  abstract analyzeIssueNumber(issue: TIssue): number | undefined;
 
   getLabels(issue: TIssue): string[] {
     let {

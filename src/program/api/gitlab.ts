@@ -58,6 +58,7 @@ export function routeGitLabIssueSynchronizer(
         taskNonDoneActiveNodes: inputs['task-non-done-active-nodes'],
         taskDescription: inputs['task-description'],
         taskTags: inputs['task-tags'],
+        metadata: inputs['task-metadata'],
       });
     }),
   );

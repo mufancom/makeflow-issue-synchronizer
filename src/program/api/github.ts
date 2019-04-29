@@ -36,7 +36,7 @@ export function routeGitHubIssueSynchronizer(
 
       checkRequiredFields(
         inputs,
-        ['github-api-url', 'github-token', 'github-project-name', 'task-brief'],
+        ['github-url', 'github-token', 'github-project-name', 'task-brief'],
         'GitHub issue synchronizer inputs',
       );
 
@@ -46,7 +46,7 @@ export function routeGitHubIssueSynchronizer(
         config: configId,
         options: {
           type: 'github',
-          apiURL: inputs['github-api-url'],
+          url: inputs['github-url'],
           token: inputs['github-token'],
           projectName: inputs['github-project-name'],
         },
@@ -58,6 +58,7 @@ export function routeGitHubIssueSynchronizer(
         taskNonDoneActiveNodes: inputs['task-non-done-active-nodes'],
         taskDescription: inputs['task-description'],
         taskTags: inputs['task-tags'],
+        metadata: inputs['task-metadata'],
       });
     }),
   );

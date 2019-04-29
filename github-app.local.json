@@ -4,8 +4,8 @@
   "description": "GitHub Issue Synchronizer for Makeflow",
   "configs": [
     {
-      "name": "github-api-url",
-      "displayName": "GitHub API 地址"
+      "name": "github-url",
+      "displayName": "GitHub 地址"
     },
     {
       "name": "github-token",
@@ -32,11 +32,11 @@
       "hookBaseURL": "http://localhost:8888/github-issue-synchronizer",
       "inputs": [
         {
-          "name": "github-api-url",
-          "displayName": "GitHub API 地址",
+          "name": "github-url",
+          "displayName": "GitHub 地址",
           "default": {
             "type": "app-config",
-            "configName": "github-api-url"
+            "configName": "github-url"
           }
         },
         {
@@ -109,6 +109,14 @@
           "bind": {
             "type": "resource-property",
             "propertyName": "nonDoneActiveNodes"
+          }
+        },
+        {
+          "name": "task-metadata",
+          "displayName": "任务元数据",
+          "bind": {
+            "type": "resource-property",
+            "propertyName": "metadata"
           }
         }
       ]

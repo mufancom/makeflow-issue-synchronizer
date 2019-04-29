@@ -1,3 +1,4 @@
+import escapeStringRegExp from 'escape-string-regexp';
 import {FilterQuery} from 'mongodb';
 import fetch, {Response} from 'node-fetch';
 import {Dict} from 'tslang';
@@ -36,6 +37,31 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
       'options.url': url,
       'options.projectName': projectName,
     };
+  }
+
+  analyzeIssueNumber(issue: GitLabIssue): number | undefined {
+    let {
+      metadata,
+      options: {url, projectName},
+    } = issue;
+
+    let ref = metadata && metadata.ref;
+
+    if (!ref || typeof ref !== 'string') {
+      return undefined;
+    }
+
+    let matchResult = new RegExp(
+      `^${escapeStringRegExp(url)}\/${escapeStringRegExp(
+        projectName,
+      )}\/issues\/(\\d+)\/?$`,
+    ).exec(ref);
+
+    if (!matchResult) {
+      return undefined;
+    }
+
+    return Number(matchResult[1]);
   }
 
   async createIssue(issue: GitLabIssue): Promise<number> {

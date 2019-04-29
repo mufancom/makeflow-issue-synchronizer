@@ -27,11 +27,11 @@ export class IssueService {
         options: {type: adapterType},
       } = issue;
 
-      let provider = this.issueAdapterDict[adapterType];
+      let adapter = this.issueAdapterDict[adapterType];
 
-      lockPath = await this.lockService.lock(provider.getLockResourceId(issue));
+      lockPath = await this.lockService.lock(adapter.getLockResourceId(issue));
 
-      let query = provider.getIssueQuery(issue);
+      let query = adapter.getIssueQuery(issue);
 
       let issueDoc = await this.dbService
         .collectionOfType('issue')
@@ -40,7 +40,7 @@ export class IssueService {
       let {config: configId, clock, task: taskId, options} = issue;
 
       if (issueDoc) {
-        await provider.updateIssue(issue, issueDoc.issueNumber);
+        await adapter.updateIssue(issue, issueDoc.issueNumber);
 
         await this.dbService.collectionOfType('issue').updateOne(query, {
           $set: {
@@ -51,7 +51,13 @@ export class IssueService {
           },
         });
       } else {
-        let issueNumber = await provider.createIssue(issue);
+        let issueNumber = adapter.analyzeIssueNumber(issue);
+
+        if (issueNumber !== undefined) {
+          await adapter.updateIssue(issue, issueNumber);
+        } else {
+          issueNumber = await adapter.createIssue(issue);
+        }
 
         await this.dbService.collectionOfType('issue').insertOne({
           issueNumber,

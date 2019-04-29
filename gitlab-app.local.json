@@ -110,6 +110,14 @@
             "type": "resource-property",
             "propertyName": "nonDoneActiveNodes"
           }
+        },
+        {
+          "name": "task-metadata",
+          "displayName": "任务元数据",
+          "bind": {
+            "type": "resource-property",
+            "propertyName": "metadata"
+          }
         }
       ]
     }
