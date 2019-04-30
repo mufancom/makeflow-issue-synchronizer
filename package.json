@@ -10,6 +10,9 @@
     "lint:program": "tslint --project src/program",
     "lint-prettier": "prettier --check \"**/*.{ts,tsx,js,jsx,json,yml,md}\"",
     "lint": "yarn lint-prettier && yarn lint:program",
+    "build:docker": "docker build . --tag makeflow-issue-synchronizer",
+    "deploy:docker-compose": "docker stack deploy --compose-file docker-compose.yml makeflow-issue-synchronizer",
+    "deploy:docker": "yarn build:docker && yarn deploy:docker-compose",
     "test": "jest"
   },
   "devDependencies": {
