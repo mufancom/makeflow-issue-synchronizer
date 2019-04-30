@@ -5,9 +5,9 @@ WORKDIR /app
 COPY package.json     /app/package.json
 COPY yarn.lock        /app/yarn.lock
 COPY .config/         /app/.config/
-COPY bld/             /app/bld/
+COPY src/             /app/src/
 
-RUN yarn
+RUN yarn && yarn build:program
 
 ENV NODE_ENV=production
 ENV PORT=8080
