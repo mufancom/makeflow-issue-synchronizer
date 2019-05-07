@@ -9,7 +9,7 @@ import {
   routeGitLabIssueSynchronizer,
 } from '../api';
 
-import {IssueService} from './issue';
+import {IssueService} from './issue-service';
 
 export interface HTTPServiceOptions {
   port: number;

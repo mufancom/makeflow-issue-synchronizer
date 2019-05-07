@@ -6,12 +6,16 @@ export type APIHandler = (
   ctx: ParameterizedContext,
 ) => Promise<APIResponse | void>;
 
-export function response(handler: APIHandler): Middleware {
+export function requestProcessor(handler: APIHandler): Middleware {
   return async (ctx, next): Promise<any> => {
     let result: APIResponse = {};
 
     try {
-      result = (await handler(ctx)) || {};
+      let handledResult = await handler(ctx);
+
+      if (handledResult) {
+        result = handledResult;
+      }
     } catch (error) {
       let resultError: APIResponseError;
 

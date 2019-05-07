@@ -1,6 +1,12 @@
+import {IIssue} from './issue';
+
 export interface GitLabIssueProviderOptions {
   type: 'gitlab';
-  gitlabURL: string;
-  gitlabToken: string;
-  gitlabProjectName: string;
+  url: string;
+  token: string;
+  projectName: string;
+}
+
+export interface GitLabIssue extends IIssue {
+  options: GitLabIssueProviderOptions;
 }
