@@ -24,8 +24,8 @@ export interface IIssue {
   task: string;
   tagName: string;
   options: object;
-  syncTags: string;
-  syncStageTags: string;
+  tagsPattern: string;
+  stagesPattern: string;
   taskStage: TaskStage;
   taskBrief: string;
   taskDescription: string;

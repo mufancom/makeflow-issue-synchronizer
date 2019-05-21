@@ -3,7 +3,6 @@ import {FilterQuery} from 'mongodb';
 import {Issue, IssueDocument} from '../models';
 
 const SYNC_ALL = '*';
-const SYNC_ON = 'on';
 const SYNC_OFF = 'off';
 
 abstract class IssueAdapter<TIssue extends Issue> {
@@ -18,31 +17,52 @@ abstract class IssueAdapter<TIssue extends Issue> {
       taskNonDoneActiveNodes,
       taskTags,
       tagName,
-      syncTags = SYNC_OFF,
-      syncStageTags = SYNC_OFF,
+      tagsPattern = SYNC_OFF,
+      stagesPattern = SYNC_OFF,
     } = issue;
 
-    let stageTagNames = syncStageTags === SYNC_ON ? taskNonDoneActiveNodes : [];
+    let stageLabelNames = this.getLabelNamesByPattern(
+      stagesPattern,
+      taskNonDoneActiveNodes,
+    );
 
-    let taskTagNames = taskTags.map(tag => tag.name);
+    let tagLabelNames = this.getLabelNamesByPattern(
+      tagsPattern,
+      taskTags.map(tag => tag.name),
+      [tagName],
+    );
 
-    let taskTagNamesToSync: string[];
+    return [...stageLabelNames, ...tagLabelNames];
+  }
 
-    if (syncTags === SYNC_ALL) {
-      taskTagNamesToSync = taskTagNames;
-    } else if (syncTags && syncTags !== SYNC_OFF) {
-      let abelToSyncTagNameSet = new Set(syncTags.split(','));
-
-      taskTagNamesToSync = taskTagNames.filter(tagName =>
-        abelToSyncTagNameSet.has(tagName),
-      );
-    } else {
-      taskTagNamesToSync = [];
+  private getLabelNamesByPattern(
+    labelPattern: string,
+    originLabels: string[],
+    avoidedLabels: string[] = [],
+  ): string[] {
+    if (labelPattern === 'off') {
+      return [];
     }
 
-    return [...stageTagNames, ...taskTagNamesToSync].filter(
-      label => label !== tagName,
+    let allowedLabelsMap = new Map(
+      labelPattern.split(',').map(item => {
+        let [key, value] = item.split(':');
+
+        return [key.trimStart(), value];
+      }),
     );
+
+    if (!allowedLabelsMap.has(SYNC_ALL)) {
+      originLabels = originLabels.filter(label => allowedLabelsMap.has(label));
+    }
+
+    if (avoidedLabels.length) {
+      originLabels = originLabels.filter(
+        label => !avoidedLabels.includes(label),
+      );
+    }
+
+    return originLabels.map(label => allowedLabelsMap.get(label) || label);
   }
 }
 

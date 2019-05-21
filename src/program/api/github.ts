@@ -40,7 +40,13 @@ export function routeGitHubIssueSynchronizer(
         'GitHub issue synchronizer inputs',
       );
 
-      await issueService.synchronizeIssue({
+      let ignored = inputs['ignored'];
+
+      if (ignored) {
+        return {};
+      }
+
+      return issueService.synchronizeIssue({
         clock,
         task: resource.id,
         config: configId,
@@ -51,8 +57,8 @@ export function routeGitHubIssueSynchronizer(
           projectName: inputs['github-project-name'],
         },
         tagName,
-        syncTags: inputs['sync-tags'],
-        syncStageTags: inputs['sync-stage-tags'],
+        tagsPattern: inputs['tags-pattern'],
+        stagesPattern: inputs['stages-pattern'],
         taskBrief: inputs['task-brief'],
         taskStage: inputs['task-stage'],
         taskNonDoneActiveNodes: inputs['task-non-done-active-nodes'],

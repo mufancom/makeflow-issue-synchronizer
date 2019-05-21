@@ -16,12 +16,12 @@
       "displayName": "项目名 (owner/repository)"
     },
     {
-      "name": "sync-tags",
-      "displayName": "同步标签列表 (用 ',' 分隔, '*' 表示全部同步, 'off' 表示不同步)"
+      "name": "tags-pattern",
+      "displayName": "标签同步模式 (例如: `缺陷:bug,feature,*`), 'off' 为关闭同步"
     },
     {
-      "name": "sync-stage-tags",
-      "displayName": "是否同步任务阶段标签 ('on' 为同步)"
+      "name": "stages-pattern",
+      "displayName": "阶段标签同步模式 (例如: `开发:develop,交付,*`), 'off' 为关闭同步"
     }
   ],
   "powerTags": [
@@ -56,19 +56,19 @@
           }
         },
         {
-          "name": "sync-tags",
-          "displayName": "同步标签列表 (用 ',' 分隔, '*' 表示全部同步, 留空或 'off' 为不同步)",
+          "name": "tags-pattern",
+          "displayName": "标签同步模式 (例如: `缺陷:bug,feature,*`), 'off' 为关闭同步",
           "default": {
             "type": "app-config",
-            "configName": "sync-tags"
+            "configName": "tags-pattern"
           }
         },
         {
-          "name": "sync-stage-tags",
-          "displayName": "是否同步任务阶段标签 ('on' 为同步)",
+          "name": "stages-pattern",
+          "displayName": "阶段标签同步模式 (例如: `开发:develop,交付,*`), 'off' 为关闭同步",
           "default": {
             "type": "app-config",
-            "configName": "sync-stage-tags"
+            "configName": "stages-pattern"
           }
         },
         {
@@ -117,6 +117,14 @@
           "bind": {
             "type": "resource-property",
             "propertyName": "metadata"
+          }
+        },
+        {
+          "name": "ignored",
+          "displayName": "忽略同步变量",
+          "bind": {
+            "type": "variable",
+            "variable": "issue-synchronizer-ignored"
           }
         }
       ]

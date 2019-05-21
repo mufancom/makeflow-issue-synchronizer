@@ -17,6 +17,8 @@ export function requestProcessor(handler: APIHandler): Middleware {
         result = handledResult;
       }
     } catch (error) {
+      console.error(error);
+
       let resultError: APIResponseError;
 
       if (error instanceof ExpectedError) {
