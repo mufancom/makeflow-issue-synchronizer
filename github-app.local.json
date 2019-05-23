@@ -10,18 +10,6 @@
     {
       "name": "github-token",
       "displayName": "GitHub Token"
-    },
-    {
-      "name": "github-project-name",
-      "displayName": "项目名 (owner/repository)"
-    },
-    {
-      "name": "tags-pattern",
-      "displayName": "标签同步模式 (例如: `缺陷:bug,feature,*`), 'off' 为关闭同步"
-    },
-    {
-      "name": "stages-pattern",
-      "displayName": "阶段标签同步模式 (例如: `开发:develop,交付,*`), 'off' 为关闭同步"
     }
   ],
   "powerTags": [
@@ -49,27 +37,15 @@
         },
         {
           "name": "github-project-name",
-          "displayName": "项目名 (owner/repository)",
-          "default": {
-            "type": "app-config",
-            "configName": "github-project-name"
-          }
+          "displayName": "项目名 (owner/repository)"
         },
         {
           "name": "tags-pattern",
-          "displayName": "标签同步模式 (例如: `缺陷:bug,feature,*`), 'off' 为关闭同步",
-          "default": {
-            "type": "app-config",
-            "configName": "tags-pattern"
-          }
+          "displayName": "标签同步模式 (例如: `缺陷:bug,feature,*`), 留空为关闭同步"
         },
         {
           "name": "stages-pattern",
-          "displayName": "阶段标签同步模式 (例如: `开发:develop,交付,*`), 'off' 为关闭同步",
-          "default": {
-            "type": "app-config",
-            "configName": "stages-pattern"
-          }
+          "displayName": "阶段标签同步模式 (例如: `开发:develop,交付,*`), 留空为关闭同步"
         },
         {
           "name": "task-stage",
@@ -120,11 +96,11 @@
           }
         },
         {
-          "name": "ignored",
-          "displayName": "忽略同步变量",
+          "name": "disabled",
+          "displayName": "禁用同步的变量",
           "bind": {
             "type": "variable",
-            "variable": "issue-synchronizer-ignored"
+            "variable": "issue-synchronizer-disabled"
           }
         }
       ]

@@ -40,9 +40,9 @@ export function routeGitLabIssueSynchronizer(
         'GitLab issue synchronizer inputs',
       );
 
-      let ignored = inputs['ignored'];
+      let disabled = inputs['disabled'];
 
-      if (ignored) {
+      if (disabled) {
         return {};
       }
 

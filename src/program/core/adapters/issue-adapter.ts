@@ -2,8 +2,8 @@ import {FilterQuery} from 'mongodb';
 
 import {Issue, IssueDocument} from '../models';
 
-const SYNC_ALL = '*';
-const SYNC_OFF = 'off';
+const SYNC_PATTERN_ALL = '*';
+const SYNC_PATTERN_OFF = '';
 
 abstract class IssueAdapter<TIssue extends Issue> {
   abstract getLockResourceId(issue: TIssue): string;
@@ -17,8 +17,8 @@ abstract class IssueAdapter<TIssue extends Issue> {
       taskNonDoneActiveNodes,
       taskTags,
       tagName,
-      tagsPattern = SYNC_OFF,
-      stagesPattern = SYNC_OFF,
+      tagsPattern = SYNC_PATTERN_OFF,
+      stagesPattern = SYNC_PATTERN_OFF,
     } = issue;
 
     let stageLabelNames = this.getLabelNamesByPattern(
@@ -37,10 +37,10 @@ abstract class IssueAdapter<TIssue extends Issue> {
 
   private getLabelNamesByPattern(
     labelPattern: string,
-    originLabels: string[],
-    avoidedLabels: string[] = [],
+    labels: string[],
+    ignoredLabels: string[] = [],
   ): string[] {
-    if (labelPattern === 'off') {
+    if (labelPattern === SYNC_PATTERN_OFF) {
       return [];
     }
 
@@ -48,21 +48,19 @@ abstract class IssueAdapter<TIssue extends Issue> {
       labelPattern.split(',').map(item => {
         let [key, value] = item.split(':');
 
-        return [key.trimStart(), value];
+        return [key.trim(), value && value.trim()];
       }),
     );
 
-    if (!allowedLabelsMap.has(SYNC_ALL)) {
-      originLabels = originLabels.filter(label => allowedLabelsMap.has(label));
+    if (!allowedLabelsMap.has(SYNC_PATTERN_ALL)) {
+      labels = labels.filter(label => allowedLabelsMap.has(label));
     }
 
-    if (avoidedLabels.length) {
-      originLabels = originLabels.filter(
-        label => !avoidedLabels.includes(label),
-      );
+    if (ignoredLabels.length) {
+      labels = labels.filter(label => !ignoredLabels.includes(label));
     }
 
-    return originLabels.map(label => allowedLabelsMap.get(label) || label);
+    return labels.map(label => allowedLabelsMap.get(label) || label);
   }
 }
 
