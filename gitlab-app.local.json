@@ -10,18 +10,6 @@
     {
       "name": "gitlab-token",
       "displayName": "GitLab Token"
-    },
-    {
-      "name": "gitlab-project-name",
-      "displayName": "项目名 (namespace/project)"
-    },
-    {
-      "name": "sync-tags",
-      "displayName": "同步标签列表 (用 ',' 分隔, '*' 表示全部同步, 'off' 表示不同步)"
-    },
-    {
-      "name": "sync-stage-tags",
-      "displayName": "是否同步任务阶段标签 ('on' 为同步)"
     }
   ],
   "powerTags": [
@@ -49,27 +37,15 @@
         },
         {
           "name": "gitlab-project-name",
-          "displayName": "项目名 (namespace/project)",
-          "default": {
-            "type": "app-config",
-            "configName": "gitlab-project-name"
-          }
+          "displayName": "项目名 (namespace/project)"
         },
         {
-          "name": "sync-tags",
-          "displayName": "同步标签列表 (用 ',' 分隔, '*' 表示全部同步, 留空或 'off' 为不同步)",
-          "default": {
-            "type": "app-config",
-            "configName": "sync-tags"
-          }
+          "name": "tags-pattern",
+          "displayName": "标签同步模式 (例如: `缺陷:bug,feature,*`), 留空为关闭同步"
         },
         {
-          "name": "sync-stage-tags",
-          "displayName": "是否同步任务阶段标签 ('on' 为同步)",
-          "default": {
-            "type": "app-config",
-            "configName": "sync-stage-tags"
-          }
+          "name": "stages-pattern",
+          "displayName": "阶段标签同步模式 (例如: `开发:develop,交付,*`), 留空为关闭同步"
         },
         {
           "name": "task-stage",
@@ -117,6 +93,14 @@
           "bind": {
             "type": "resource-property",
             "propertyName": "metadata"
+          }
+        },
+        {
+          "name": "disabled",
+          "displayName": "忽略同步变量",
+          "bind": {
+            "type": "variable",
+            "variable": "issue-synchronizer-disabled"
           }
         }
       ]

@@ -2,9 +2,8 @@ import {FilterQuery} from 'mongodb';
 
 import {Issue, IssueDocument} from '../models';
 
-const SYNC_ALL = '*';
-const SYNC_ON = 'on';
-const SYNC_OFF = 'off';
+const SYNC_PATTERN_ALL = '*';
+const SYNC_PATTERN_OFF = '';
 
 abstract class IssueAdapter<TIssue extends Issue> {
   abstract getLockResourceId(issue: TIssue): string;
@@ -18,31 +17,50 @@ abstract class IssueAdapter<TIssue extends Issue> {
       taskNonDoneActiveNodes,
       taskTags,
       tagName,
-      syncTags = SYNC_OFF,
-      syncStageTags = SYNC_OFF,
+      tagsPattern = SYNC_PATTERN_OFF,
+      stagesPattern = SYNC_PATTERN_OFF,
     } = issue;
 
-    let stageTagNames = syncStageTags === SYNC_ON ? taskNonDoneActiveNodes : [];
+    let stageLabelNames = this.getLabelNamesByPattern(
+      stagesPattern,
+      taskNonDoneActiveNodes,
+    );
 
-    let taskTagNames = taskTags.map(tag => tag.name);
+    let tagLabelNames = this.getLabelNamesByPattern(
+      tagsPattern,
+      taskTags.map(tag => tag.name),
+      [tagName],
+    );
 
-    let taskTagNamesToSync: string[];
+    return [...stageLabelNames, ...tagLabelNames];
+  }
 
-    if (syncTags === SYNC_ALL) {
-      taskTagNamesToSync = taskTagNames;
-    } else if (syncTags && syncTags !== SYNC_OFF) {
-      let abelToSyncTagNameSet = new Set(syncTags.split(','));
-
-      taskTagNamesToSync = taskTagNames.filter(tagName =>
-        abelToSyncTagNameSet.has(tagName),
-      );
-    } else {
-      taskTagNamesToSync = [];
+  private getLabelNamesByPattern(
+    labelPattern: string,
+    labels: string[],
+    excludeLabels: string[] = [],
+  ): string[] {
+    if (labelPattern === SYNC_PATTERN_OFF) {
+      return [];
     }
 
-    return [...stageTagNames, ...taskTagNamesToSync].filter(
-      label => label !== tagName,
+    let allowedLabelsMap = new Map(
+      labelPattern.split(',').map(item => {
+        let [key, value] = item.split(':');
+
+        return [key.trim(), value && value.trim()];
+      }),
     );
+
+    if (!allowedLabelsMap.has(SYNC_PATTERN_ALL)) {
+      labels = labels.filter(label => allowedLabelsMap.has(label));
+    }
+
+    if (excludeLabels.length) {
+      labels = labels.filter(label => !excludeLabels.includes(label));
+    }
+
+    return labels.map(label => allowedLabelsMap.get(label) || label);
   }
 }
 
