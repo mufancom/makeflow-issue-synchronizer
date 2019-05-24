@@ -38,7 +38,7 @@ abstract class IssueAdapter<TIssue extends Issue> {
   private getLabelNamesByPattern(
     labelPattern: string,
     labels: string[],
-    ignoredLabels: string[] = [],
+    excludeLabels: string[] = [],
   ): string[] {
     if (labelPattern === SYNC_PATTERN_OFF) {
       return [];
@@ -56,8 +56,8 @@ abstract class IssueAdapter<TIssue extends Issue> {
       labels = labels.filter(label => allowedLabelsMap.has(label));
     }
 
-    if (ignoredLabels.length) {
-      labels = labels.filter(label => !ignoredLabels.includes(label));
+    if (excludeLabels.length) {
+      labels = labels.filter(label => !excludeLabels.includes(label));
     }
 
     return labels.map(label => allowedLabelsMap.get(label) || label);
