@@ -20,18 +20,18 @@ interface GitLabAPIOptions {
 
 export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
   getLockResourceId(issue: GitLabIssue): string {
-    let {config: configId, task: taskId} = issue;
+    let {token, task: taskId} = issue;
 
-    return `issue-synchronizer:gitlab:${configId}:${taskId}`;
+    return `issue-synchronizer:gitlab:${token}:${taskId}`;
   }
 
   getIssueQuery(issue: GitLabIssue): FilterQuery<IssueDocument> {
-    let {config: configId, task: taskId, options} = issue;
+    let {token, task: taskId, options} = issue;
 
     let {url, projectName} = options;
 
     return {
-      config: configId,
+      token,
       task: taskId,
       'options.type': 'gitlab',
       'options.url': url,
@@ -41,13 +41,11 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
 
   analyzeIssueNumber(issue: GitLabIssue): number | undefined {
     let {
-      metadata,
+      taskRef,
       options: {url, projectName},
     } = issue;
 
-    let ref = metadata && metadata.ref;
-
-    if (!ref || typeof ref !== 'string') {
+    if (!taskRef || typeof taskRef !== 'string') {
       return undefined;
     }
 
@@ -55,7 +53,7 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
       `^${escapeStringRegExp(url)}\/${escapeStringRegExp(
         projectName,
       )}\/issues\/(\\d+)\/?$`,
-    ).exec(ref);
+    ).exec(taskRef);
 
     if (!matchResult) {
       return undefined;
@@ -86,6 +84,10 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
     });
 
     let responseData = await response.json();
+
+    if (response.status !== 201) {
+      throw new Error(responseData.message);
+    }
 
     return responseData.iid as number;
   }

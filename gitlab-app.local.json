@@ -2,105 +2,98 @@
   "name": "makeflow-gitlab-issue-synchronizer",
   "displayName": "GitLab Issue Synchronizer",
   "description": "GitLub Issue Synchronizer for Makeflow",
-  "configs": [
-    {
-      "name": "gitlab-url",
-      "displayName": "GitLab 地址"
-    },
-    {
-      "name": "gitlab-token",
-      "displayName": "GitLab Token"
-    }
-  ],
-  "powerTags": [
+  "version": "v0.1.0",
+  "powerGlances": [
     {
       "name": "gitlab-issue-synchronizer",
       "displayName": "GitLab Issue Synchronizer",
       "description": "GitLab Issue Synchronizer for Makeflow",
       "hookBaseURL": "http://localhost:8888/gitlab-issue-synchronizer",
-      "inputs": [
+      "configs": [
         {
+          "type": "text",
           "name": "gitlab-url",
           "displayName": "GitLab 地址",
-          "default": {
-            "type": "app-config",
-            "configName": "gitlab-url"
-          }
+          "required": true
         },
         {
+          "type": "password",
           "name": "gitlab-token",
           "displayName": "GitLab Token",
-          "default": {
-            "type": "app-config",
-            "configName": "gitlab-token"
-          }
+          "required": true
         },
         {
+          "type": "text",
           "name": "gitlab-project-name",
-          "displayName": "项目名 (namespace/project)"
+          "displayName": "项目名 (namespace/repository)",
+          "required": true
         },
         {
+          "type": "text",
           "name": "tags-pattern",
           "displayName": "标签同步模式 (例如: `缺陷:bug,feature,*`), 留空为关闭同步"
         },
         {
+          "type": "text",
           "name": "stages-pattern",
           "displayName": "阶段标签同步模式 (例如: `开发:develop,交付,*`), 留空为关闭同步"
-        },
+        }
+      ],
+      "inputs": [
         {
           "name": "task-stage",
           "displayName": "任务状态",
           "bind": {
-            "type": "resource-property",
-            "propertyName": "stage"
+            "type": "variable",
+            "variable": "task:stage"
           }
         },
         {
           "name": "task-brief",
           "displayName": "任务简述",
           "bind": {
-            "type": "resource-property",
-            "propertyName": "brief"
+            "type": "variable",
+            "variable": "task:brief"
           }
         },
         {
           "name": "task-description",
           "displayName": "任务描述",
           "bind": {
-            "type": "resource-property",
-            "propertyName": "description"
+            "type": "variable",
+            "variable": "task:description"
           }
         },
         {
           "name": "task-tags",
           "displayName": "任务标签",
           "bind": {
-            "type": "resource-property",
-            "propertyName": "tags"
+            "type": "variable",
+            "variable": "task:tags"
           }
         },
         {
           "name": "task-non-done-active-nodes",
           "displayName": "任务未完成的已激活节点",
           "bind": {
-            "type": "resource-property",
-            "propertyName": "nonDoneActiveNodes"
-          }
-        },
-        {
-          "name": "task-metadata",
-          "displayName": "任务元数据",
-          "bind": {
-            "type": "resource-property",
-            "propertyName": "metadata"
+            "type": "variable",
+            "variable": "task:nonDoneActiveNodes"
           }
         },
         {
           "name": "disabled",
-          "displayName": "忽略同步变量",
+          "displayName": "禁用同步的变量",
           "bind": {
             "type": "variable",
             "variable": "issue-synchronizer-disabled"
+          }
+        },
+        {
+          "name": "task-ref",
+          "displayName": "任务创建来源",
+          "bind": {
+            "type": "variable",
+            "variable": "task-ref"
           }
         }
       ]

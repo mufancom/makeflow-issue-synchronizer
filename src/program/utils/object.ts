@@ -2,9 +2,9 @@ import _ from 'lodash';
 
 import {ExpectedError} from '../core';
 
-export function checkRequiredFields(
-  object: object,
-  fields: string[],
+export function checkRequiredConfigs<T extends object>(
+  object: T,
+  fields: (keyof T)[],
   label: string,
 ): void {
   for (let field of fields) {
