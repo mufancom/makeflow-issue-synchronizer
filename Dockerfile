@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json     /app/package.json
 COPY yarn.lock        /app/yarn.lock
 COPY .config/         /app/.config/
-COPY src/             /app/src/
+COPY bld/             /app/bld/
 
 RUN yarn && yarn build:program
 
