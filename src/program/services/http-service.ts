@@ -39,6 +39,6 @@ export class HTTPService {
     routeGitLabIssueSynchronizer(this.issueService, apiRouter);
 
     app.use(apiRouter.routes());
-    app.use(apiRouter.allowedMethods);
+    app.use(apiRouter.allowedMethods());
   }
 }

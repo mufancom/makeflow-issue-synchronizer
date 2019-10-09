@@ -16,7 +16,6 @@ abstract class IssueAdapter<TIssue extends Issue> {
     let {
       taskNonDoneActiveNodes,
       taskTags,
-      tagName,
       tagsPattern = SYNC_PATTERN_OFF,
       stagesPattern = SYNC_PATTERN_OFF,
     } = issue;
@@ -28,8 +27,7 @@ abstract class IssueAdapter<TIssue extends Issue> {
 
     let tagLabelNames = this.getLabelNamesByPattern(
       tagsPattern,
-      taskTags.map(tag => tag.name),
-      [tagName],
+      taskTags.map(tag => tag.displayName),
     );
 
     return [...stageLabelNames, ...tagLabelNames];

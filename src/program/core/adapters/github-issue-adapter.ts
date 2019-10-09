@@ -12,19 +12,19 @@ import {AbstractIssueAdapter} from './issue-adapter';
 type GitHubIssueStatus = 'open' | 'closed';
 
 export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
-  getLockResourceId({config: configId, task: taskId}: GitHubIssue): string {
-    return `issue-synchronizer:github:${configId}:${taskId}`;
+  getLockResourceId({token, task: taskId}: GitHubIssue): string {
+    return `issue-synchronizer:github:${token}:${taskId}`;
   }
 
   getIssueQuery({
-    config: configId,
+    token,
     task: taskId,
     options,
   }: GitHubIssue): FilterQuery<IssueDocument> {
     let {projectName} = options;
 
     return {
-      config: configId,
+      token,
       task: taskId,
       'options.type': 'github',
       'options.projectName': projectName,
@@ -33,13 +33,11 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
 
   analyzeIssueNumber(issue: GitHubIssue): number | undefined {
     let {
-      metadata,
+      taskRef,
       options: {url, projectName},
     } = issue;
 
-    let ref = metadata && metadata.ref;
-
-    if (!ref || typeof ref !== 'string') {
+    if (!taskRef || typeof taskRef !== 'string') {
       return undefined;
     }
 
@@ -47,7 +45,7 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
       `^${escapeStringRegExp(url)}\/${escapeStringRegExp(
         projectName,
       )}\/issues\/(\\d+)\/?$`,
-    ).exec(ref);
+    ).exec(taskRef);
 
     if (!matchResult) {
       return undefined;

@@ -1,14 +1,14 @@
 import {ObjectId} from 'mongodb';
-import {Dict} from 'tslang';
+
+import {TaskStage, TaskTag} from '../../types';
 
 import {GitHubIssueProviderOptions} from './github';
 import {GitLabIssueProviderOptions} from './gitlab';
-import {TaskStage, TaskTag} from './task';
 
 export interface IssueDocument {
   _id: ObjectId;
   issueNumber: number;
-  config: string;
+  token: string;
   clock: number;
   task: string;
   options: IssueProviderOptions;
@@ -19,10 +19,10 @@ export type IssueProviderOptions =
   | GitLabIssueProviderOptions;
 
 export interface IIssue {
-  config: string;
+  token: string;
   clock: number;
+  taskRef: string;
   task: string;
-  tagName: string;
   options: object;
   tagsPattern: string;
   stagesPattern: string;
@@ -31,5 +31,4 @@ export interface IIssue {
   taskDescription: string;
   taskNonDoneActiveNodes: string[];
   taskTags: TaskTag[];
-  metadata: Dict<unknown>;
 }
