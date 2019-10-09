@@ -8,7 +8,7 @@
       "name": "gitlab-issue-synchronizer",
       "displayName": "GitLab Issue Synchronizer",
       "description": "GitLab Issue Synchronizer for Makeflow",
-      "hookBaseURL": "http://localhost:8888/gitlab-issue-synchronizer",
+      "hookBaseURL": "http://issue-syncer.makeflow.io/gitlab-issue-synchronizer",
       "configs": [
         {
           "type": "text",
