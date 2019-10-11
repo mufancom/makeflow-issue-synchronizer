@@ -15,7 +15,7 @@ export function routeGitLabIssueSynchronizer(
       let {name, token, clock, resources, configs} = ctx.request
         .body as MakeflowPowerGlanceApiBody<GitLabPowerAppConfig>;
 
-      console.info('Received github issue synchronization request: ', {
+      console.info('Received gitlab issue synchronization request: ', {
         name,
         token,
         clock,
