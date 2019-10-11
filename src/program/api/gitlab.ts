@@ -15,6 +15,13 @@ export function routeGitLabIssueSynchronizer(
       let {name, token, clock, resources, configs} = ctx.request
         .body as MakeflowPowerGlanceApiBody<GitLabPowerAppConfig>;
 
+      console.info('Received gitlab issue synchronization request: ', {
+        name,
+        token,
+        clock,
+        resources,
+      });
+
       checkRequiredConfigs(
         configs,
         ['gitlab-url', 'gitlab-token', 'gitlab-project-name'],
