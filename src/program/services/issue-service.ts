@@ -61,7 +61,7 @@ export class IssueService {
       resources
         .filter(({inputs: {disabled}}) => !disabled)
         .map(
-          ({ref: {id}, inputs}): Issue => {
+          ({ref: {id}, inputs, removed}): Issue => {
             return {
               clock,
               task: id,
@@ -70,7 +70,7 @@ export class IssueService {
               tagsPattern: config['tags-pattern'],
               stagesPattern: config['stages-pattern'],
               taskBrief: inputs['task-brief'],
-              taskStage: inputs['task-stage'],
+              taskStage: removed ? 'done' : inputs['task-stage'],
               taskNonDoneActiveNodes: inputs['task-non-done-active-nodes'],
               taskDescription: inputs['task-description'],
               taskTags: inputs['task-tags'],
