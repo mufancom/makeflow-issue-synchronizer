@@ -15,12 +15,15 @@ export function routeGitHubIssueSynchronizer(
       let {name, token, clock, resources, configs} = ctx.request
         .body as MakeflowPowerGlanceApiBody<GitHubPowerAppConfig>;
 
-      console.info('Received github issue synchronization request: ', {
-        name,
-        token,
-        clock,
+      console.info(
+        'Received github issue synchronization request: ',
+        {
+          name,
+          token,
+          clock,
+        },
         resources,
-      });
+      );
 
       checkRequiredConfigs(
         configs,

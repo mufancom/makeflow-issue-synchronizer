@@ -70,11 +70,12 @@ export class IssueService {
               tagsPattern: config['tags-pattern'],
               stagesPattern: config['stages-pattern'],
               taskBrief: inputs['task-brief'],
-              taskStage: removed ? 'done' : inputs['task-stage'],
+              taskStage: inputs['task-stage'],
               taskNonDoneActiveNodes: inputs['task-non-done-active-nodes'],
               taskDescription: inputs['task-description'],
               taskTags: inputs['task-tags'],
               options,
+              removed,
             } as Issue;
           },
         ),
@@ -101,7 +102,7 @@ export class IssueService {
         .collectionOfType('issue')
         .findOne(query);
 
-      let {token, clock, task: taskId, options} = issue;
+      let {token, clock, task: taskId, options, removed} = issue;
 
       if (issueDoc) {
         await adapter.updateIssue(issue, issueDoc.issueNumber);
@@ -114,7 +115,7 @@ export class IssueService {
             options,
           },
         });
-      } else {
+      } else if (!removed) {
         let issueNumber = adapter.analyzeIssueNumber(issue);
 
         if (issueNumber !== undefined) {

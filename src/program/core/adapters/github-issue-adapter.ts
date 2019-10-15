@@ -55,13 +55,16 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
   }
 
   async createIssue(issue: GitHubIssue): Promise<number> {
-    let {options, taskBrief, taskDescription} = issue;
+    let {options, taskBrief, taskDescription, taskStage} = issue;
 
     let {projectName} = options;
 
     let [owner, repository] = this.getOwnerAndRepository(projectName);
 
     let octokit = this.getOctokit(issue);
+
+    let state: GitHubIssueStatus =
+      taskStage === 'in-progress' || taskStage === 'to-do' ? 'open' : 'closed';
 
     let response = await octokit.issues.create({
       owner,
@@ -71,11 +74,22 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
       labels: this.getLabels(issue),
     });
 
-    return response.data.number;
+    let issueNumber = response.data.number;
+
+    if (state !== 'open') {
+      await octokit.issues.update({
+        owner,
+        repo: repository,
+        number: issueNumber,
+        state,
+      });
+    }
+
+    return issueNumber;
   }
 
   async updateIssue(issue: GitHubIssue, issueNumber: number): Promise<void> {
-    let {options, taskBrief, taskDescription, taskStage} = issue;
+    let {options, taskBrief, taskDescription, taskStage, removed} = issue;
 
     let {projectName} = options;
 
@@ -84,7 +98,9 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
     let [owner, repository] = this.getOwnerAndRepository(projectName);
 
     let state: GitHubIssueStatus =
-      taskStage === 'in-progress' || taskStage === 'to-do' ? 'open' : 'closed';
+      !removed && (taskStage === 'in-progress' || taskStage === 'to-do')
+        ? 'open'
+        : 'closed';
 
     await octokit.issues.update({
       owner,
