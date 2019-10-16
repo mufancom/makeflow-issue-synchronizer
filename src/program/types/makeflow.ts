@@ -23,6 +23,7 @@ export interface ResourceInputs {
 export interface Resource {
   ref: ResourceRef;
   inputs: ResourceInputs;
+  removed?: boolean;
 }
 
 export type PowerAppConfig = GitHubPowerAppConfig | GitLabPowerAppConfig;

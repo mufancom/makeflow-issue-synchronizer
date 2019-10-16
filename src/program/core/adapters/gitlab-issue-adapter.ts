@@ -63,7 +63,7 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
   }
 
   async createIssue(issue: GitLabIssue): Promise<number> {
-    let {options, taskBrief, taskDescription} = issue;
+    let {options, taskBrief, taskDescription, taskStage} = issue;
 
     let {url, projectName, token} = options;
 
@@ -89,11 +89,30 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
       throw new Error(responseData.message);
     }
 
-    return responseData.iid as number;
+    let issueNumber = responseData.iid as number;
+
+    let stateEvent: GitlabStateEvent =
+      taskStage === 'in-progress' || taskStage === 'to-do' ? 'reopen' : 'close';
+
+    if (stateEvent !== 'reopen') {
+      let body = {
+        id: encodedProjectName,
+        issue_iid: issueNumber,
+        state_event: stateEvent,
+      };
+
+      await this.requestGitLabAPI(apiURL, {
+        method: 'put',
+        body,
+        token,
+      });
+    }
+
+    return issueNumber;
   }
 
   async updateIssue(issue: GitLabIssue, issueNumber: number): Promise<void> {
-    let {options, taskBrief, taskDescription, taskStage} = issue;
+    let {options, taskBrief, taskDescription, taskStage, removed} = issue;
 
     let {url, projectName, token} = options;
 
@@ -102,7 +121,9 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
     let apiURL = `${url}/api/v4/projects/${encodedProjectName}/issues/${issueNumber}`;
 
     let stateEvent: GitlabStateEvent =
-      taskStage === 'in-progress' || taskStage === 'to-do' ? 'reopen' : 'close';
+      !removed && (taskStage === 'in-progress' || taskStage === 'to-do')
+        ? 'reopen'
+        : 'close';
 
     let body = {
       id: encodedProjectName,

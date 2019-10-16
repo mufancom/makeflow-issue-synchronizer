@@ -31,4 +31,5 @@ export interface IIssue {
   taskDescription: string;
   taskNonDoneActiveNodes: string[];
   taskTags: TaskTag[];
+  removed: boolean;
 }

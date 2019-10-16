@@ -61,7 +61,7 @@ export class IssueService {
       resources
         .filter(({inputs: {disabled}}) => !disabled)
         .map(
-          ({ref: {id}, inputs}): Issue => {
+          ({ref: {id}, inputs, removed}): Issue => {
             return {
               clock,
               task: id,
@@ -75,6 +75,7 @@ export class IssueService {
               taskDescription: inputs['task-description'],
               taskTags: inputs['task-tags'],
               options,
+              removed,
             } as Issue;
           },
         ),
@@ -101,7 +102,7 @@ export class IssueService {
         .collectionOfType('issue')
         .findOne(query);
 
-      let {token, clock, task: taskId, options} = issue;
+      let {token, clock, task: taskId, options, removed} = issue;
 
       if (issueDoc) {
         await adapter.updateIssue(issue, issueDoc.issueNumber);
@@ -114,7 +115,7 @@ export class IssueService {
             options,
           },
         });
-      } else {
+      } else if (!removed) {
         let issueNumber = adapter.analyzeIssueNumber(issue);
 
         if (issueNumber !== undefined) {
