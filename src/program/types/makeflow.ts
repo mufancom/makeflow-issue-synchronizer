@@ -10,12 +10,20 @@ export interface ResourceRef {
   id: string;
 }
 
+export type TaskNodeStage = 'none' | 'in-progress' | 'done' | 'terminated';
+
+export interface TaskNode {
+  id: string;
+  displayName: string;
+  stage: TaskNodeStage;
+}
+
 export interface ResourceInputs {
   'task-stage': TaskStage;
   'task-brief': string;
   'task-description': string;
   'task-tags': TaskTag[];
-  'task-non-done-active-nodes': string[];
+  'task-nodes': TaskNode[];
   'task-ref': string;
   disabled: boolean;
 }
