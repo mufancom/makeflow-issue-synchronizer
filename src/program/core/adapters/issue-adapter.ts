@@ -14,7 +14,7 @@ abstract class IssueAdapter<TIssue extends Issue> {
 
   getLabels(issue: TIssue): string[] {
     let {
-      taskNonDoneActiveNodes,
+      taskNodes,
       taskTags,
       tagsPattern = SYNC_PATTERN_OFF,
       stagesPattern = SYNC_PATTERN_OFF,
@@ -22,7 +22,9 @@ abstract class IssueAdapter<TIssue extends Issue> {
 
     let stageLabelNames = this.getLabelNamesByPattern(
       stagesPattern,
-      taskNonDoneActiveNodes,
+      taskNodes
+        .filter(node => node.stage === 'in-progress')
+        .map(node => node.displayName),
     );
 
     let tagLabelNames = this.getLabelNamesByPattern(

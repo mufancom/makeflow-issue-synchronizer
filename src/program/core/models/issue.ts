@@ -1,6 +1,6 @@
 import {ObjectId} from 'mongodb';
 
-import {TaskStage, TaskTag} from '../../types';
+import {TaskNode, TaskStage, TaskTag} from '../../types';
 
 import {GitHubIssueProviderOptions} from './github';
 import {GitLabIssueProviderOptions} from './gitlab';
@@ -29,7 +29,7 @@ export interface IIssue {
   taskStage: TaskStage;
   taskBrief: string;
   taskDescription: string;
-  taskNonDoneActiveNodes: string[];
+  taskNodes: TaskNode[];
   taskTags: TaskTag[];
   removed: boolean;
 }

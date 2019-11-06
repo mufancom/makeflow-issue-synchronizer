@@ -71,7 +71,7 @@ export class IssueService {
               stagesPattern: config['stages-pattern'],
               taskBrief: inputs['task-brief'],
               taskStage: inputs['task-stage'],
-              taskNonDoneActiveNodes: inputs['task-non-done-active-nodes'],
+              taskNodes: inputs['task-nodes'],
               taskDescription: inputs['task-description'],
               taskTags: inputs['task-tags'],
               options,
