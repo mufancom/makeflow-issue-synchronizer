@@ -1,4 +1,5 @@
 import {FilterQuery} from 'mongodb';
+import {Dict} from 'tslang';
 
 import {Issue, IssueDocument} from '../models';
 
@@ -11,6 +12,10 @@ abstract class IssueAdapter<TIssue extends Issue> {
   abstract createIssue(issue: TIssue): Promise<number>;
   abstract updateIssue(issue: TIssue, issueNumber: number): Promise<void>;
   abstract analyzeIssueNumber(issue: TIssue): number | undefined;
+  abstract getTaskOutputsFromIssueNumber(
+    issue: TIssue,
+    issueNumber: number,
+  ): Dict<unknown>;
 
   getLabels(issue: TIssue): string[] {
     let {

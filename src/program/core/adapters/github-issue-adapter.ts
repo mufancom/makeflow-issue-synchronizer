@@ -3,6 +3,7 @@ import {URL} from 'url';
 import Octokit from '@octokit/rest';
 import escapeStringRegExp from 'escape-string-regexp';
 import {FilterQuery} from 'mongodb';
+import {Dict} from 'tslang';
 
 import {ExpectedError} from '../error';
 import {GitHubIssue, IssueDocument} from '../models';
@@ -55,7 +56,7 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
   }
 
   async createIssue(issue: GitHubIssue): Promise<number> {
-    let {options, taskBrief, taskDescription, taskStage} = issue;
+    let {options, taskBrief, taskStage} = issue;
 
     let {projectName} = options;
 
@@ -70,7 +71,7 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
       owner,
       repo: repository,
       title: taskBrief,
-      body: taskDescription,
+      body: this.getIssueBody(issue),
       labels: this.getLabels(issue),
     });
 
@@ -89,7 +90,7 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
   }
 
   async updateIssue(issue: GitHubIssue, issueNumber: number): Promise<void> {
-    let {options, taskBrief, taskDescription, taskStage, removed} = issue;
+    let {options, taskBrief, taskStage, removed} = issue;
 
     let {projectName} = options;
 
@@ -107,10 +108,24 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
       repo: repository,
       number: issueNumber,
       title: taskBrief,
-      body: taskDescription,
+      body: this.getIssueBody(issue),
       labels: this.getLabels(issue),
       state,
     });
+  }
+
+  getTaskOutputsFromIssueNumber(
+    issue: GitHubIssue,
+    issueNumber: number,
+  ): Dict<unknown> {
+    let url = new URL(issue.options.url);
+
+    url.pathname = `${issue.options.projectName}/issues/${issueNumber}`;
+
+    return {
+      'github:issue:id': issueNumber,
+      'github:issue:url': url.toString(),
+    };
   }
 
   private getOwnerAndRepository(projectName: string): [string, string] {
@@ -142,5 +157,11 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
       baseUrl: apiBaseURL,
       auth: token,
     });
+  }
+
+  private getIssueBody(issue: GitHubIssue): string {
+    let {taskURL, taskDescription} = issue;
+
+    return `Makeflow task reference: ${taskURL}\n${taskDescription}`;
   }
 }

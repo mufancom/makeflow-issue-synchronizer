@@ -1,13 +1,15 @@
 import {Collection, Db, MongoClient} from 'mongodb';
 
-import {IssueDocument} from '../core';
+import {InstallationDocument, IssueDocument} from '../core';
 
 export const COLLECTION_NAME_DICT = {
   issue: 'issues',
+  installation: 'installations',
 };
 
 export interface DocumentTypeDict {
   issue: IssueDocument;
+  installation: InstallationDocument;
 }
 
 export interface DBServiceOptions {
