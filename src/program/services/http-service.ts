@@ -7,8 +7,10 @@ import Router from 'koa-router';
 import {
   routeGitHubIssueSynchronizer,
   routeGitLabIssueSynchronizer,
+  routeInstallation,
 } from '../api';
 
+import {InstallationService} from './installation-service';
 import {IssueService} from './issue-service';
 
 export interface HTTPServiceOptions {
@@ -16,7 +18,11 @@ export interface HTTPServiceOptions {
 }
 
 export class HTTPService {
-  constructor(private server: HTTPServer, private issueService: IssueService) {
+  constructor(
+    private server: HTTPServer,
+    private issueService: IssueService,
+    private installationService: InstallationService,
+  ) {
     this.initialize();
   }
 
@@ -37,6 +43,7 @@ export class HTTPService {
 
     routeGitHubIssueSynchronizer(this.issueService, apiRouter);
     routeGitLabIssueSynchronizer(this.issueService, apiRouter);
+    routeInstallation(this.installationService, apiRouter);
 
     app.use(apiRouter.routes());
     app.use(apiRouter.allowedMethods());

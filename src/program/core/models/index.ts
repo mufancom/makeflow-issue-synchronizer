@@ -6,3 +6,4 @@ export type Issue = GitHubIssue | GitLabIssue;
 export * from './github';
 export * from './gitlab';
 export * from './issue';
+export * from './installation';

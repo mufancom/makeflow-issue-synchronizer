@@ -7,6 +7,8 @@ import {GitLabIssueProviderOptions} from './gitlab';
 
 export interface IssueDocument {
   _id: ObjectId;
+  organization: string;
+  appInstallation: string;
   issueNumber: number;
   token: string;
   clock: number;
@@ -19,6 +21,8 @@ export type IssueProviderOptions =
   | GitLabIssueProviderOptions;
 
 export interface IIssue {
+  organization: string;
+  appInstallation: string;
   token: string;
   clock: number;
   taskRef: string;
@@ -31,5 +35,6 @@ export interface IIssue {
   taskDescription: string;
   taskNodes: TaskNode[];
   taskTags: TaskTag[];
+  taskURL: string;
   removed: boolean;
 }

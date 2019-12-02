@@ -12,8 +12,15 @@ export function routeGitLabIssueSynchronizer(
   apiRouter.post(
     '/gitlab-issue-synchronizer/notify',
     requestProcessor(async ctx => {
-      let {name, token, clock, resources, configs} = ctx.request
-        .body as MakeflowPowerGlanceApiBody<GitLabPowerAppConfig>;
+      let {
+        name,
+        organization: organizationId,
+        appInstallation: appInstallationId,
+        token,
+        clock,
+        resources,
+        configs,
+      } = ctx.request.body as MakeflowPowerGlanceApiBody<GitLabPowerAppConfig>;
 
       console.info(
         'Received gitlab issue synchronization request: ',
@@ -28,17 +35,19 @@ export function routeGitLabIssueSynchronizer(
       checkRequiredConfigs(
         configs,
         ['gitlab-url', 'gitlab-token', 'gitlab-project-name'],
-        'GitHub issue synchronizer inputs',
+        'GitLab issue synchronizer inputs',
       );
 
       if (name !== 'gitlab-issue-synchronizer') {
         throw new ExpectedError(
           'PARAMETER_ERROR',
-          'GitHub issue synchronizer only accept parameters with name "gitlab-issue-synchronizer".',
+          'GitLab issue synchronizer only accept parameters with name "gitlab-issue-synchronizer".',
         );
       }
 
       await issueService.synchronizeIssuesFromConfig({
+        organization: organizationId,
+        appInstallation: appInstallationId,
         token,
         clock,
         resources,

@@ -5,6 +5,7 @@ import {IssueService} from '../services';
 import {GitHubPowerAppConfig, MakeflowPowerGlanceApiBody} from '../types';
 import {checkRequiredConfigs, requestProcessor} from '../utils';
 
+// TODO: Merge github and gitlab api
 export function routeGitHubIssueSynchronizer(
   issueService: IssueService,
   apiRouter: Router,
@@ -12,8 +13,15 @@ export function routeGitHubIssueSynchronizer(
   apiRouter.post(
     '/github-issue-synchronizer/notify',
     requestProcessor(async ctx => {
-      let {name, token, clock, resources, configs} = ctx.request
-        .body as MakeflowPowerGlanceApiBody<GitHubPowerAppConfig>;
+      let {
+        name,
+        organization: organizationId,
+        appInstallation: appInstallationId,
+        token,
+        clock,
+        resources,
+        configs,
+      } = ctx.request.body as MakeflowPowerGlanceApiBody<GitHubPowerAppConfig>;
 
       console.info(
         'Received github issue synchronization request: ',
@@ -39,6 +47,8 @@ export function routeGitHubIssueSynchronizer(
       }
 
       await issueService.synchronizeIssuesFromConfig({
+        organization: organizationId,
+        appInstallation: appInstallationId,
         token,
         clock,
         resources,

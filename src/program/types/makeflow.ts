@@ -25,6 +25,7 @@ export interface ResourceInputs {
   'task-tags': TaskTag[];
   'task-nodes': TaskNode[];
   'task-ref': string;
+  'task-url': string;
   disabled: boolean;
 }
 
@@ -56,7 +57,39 @@ export interface MakeflowPowerGlanceApiBody<TConfig extends PowerAppConfig> {
   name: string;
   clock: number;
   token: string;
+  organization: string;
+  appInstallation: string;
   resources: Resource[];
   initialize: boolean;
   configs: TConfig;
+}
+
+export interface MakeflowTouchInstallationBody {
+  organization: string;
+  team: string;
+  appInstallation: string;
+  baseURL: string;
+  token: string;
+}
+
+export interface MakeflowDeactivateInstallationBody {
+  organization: string;
+  team: string;
+  appInstallation: string;
+  token: string;
+}
+
+export interface MakeflowGrantPermissionBody {
+  organization: string;
+  team: string;
+  appInstallation: string;
+  token: string;
+  accessToken: string;
+}
+
+export interface MakeflowRevokePermissionBody {
+  organization: string;
+  team: string;
+  appInstallation: string;
+  token: string;
 }

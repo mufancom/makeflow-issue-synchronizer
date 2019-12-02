@@ -1,3 +1,5 @@
+import {URL} from 'url';
+
 import escapeStringRegExp from 'escape-string-regexp';
 import {FilterQuery} from 'mongodb';
 import fetch, {Response} from 'node-fetch';
@@ -63,7 +65,7 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
   }
 
   async createIssue(issue: GitLabIssue): Promise<number> {
-    let {options, taskBrief, taskDescription, taskStage} = issue;
+    let {options, taskBrief, taskStage} = issue;
 
     let {url, projectName, token} = options;
 
@@ -73,7 +75,7 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
     let body = {
       id: encodedProjectName,
       title: taskBrief,
-      description: taskDescription,
+      description: this.getIssueBody(issue),
       labels: this.getGitLabLabels(issue),
     };
 
@@ -112,7 +114,7 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
   }
 
   async updateIssue(issue: GitLabIssue, issueNumber: number): Promise<void> {
-    let {options, taskBrief, taskDescription, taskStage, removed} = issue;
+    let {options, taskBrief, taskStage, removed} = issue;
 
     let {url, projectName, token} = options;
 
@@ -130,7 +132,7 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
       issue_iid: issueNumber,
       title: taskBrief,
       labels: this.getGitLabLabels(issue),
-      description: taskDescription,
+      description: this.getIssueBody(issue),
       state_event: stateEvent,
     };
 
@@ -139,6 +141,20 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
       body,
       token,
     });
+  }
+
+  getTaskOutputsFromIssueNumber(
+    issue: GitLabIssue,
+    issueNumber: number,
+  ): Dict<unknown> {
+    let url = new URL(issue.options.url);
+
+    url.pathname = `${issue.options.projectName}/issues/${issueNumber}`;
+
+    return {
+      'gitlab:issue:id': issueNumber,
+      'gitlab:issue:url': url.toString(),
+    };
   }
 
   private getGitLabLabels(issue: GitLabIssue): string {
@@ -176,5 +192,11 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
     }
 
     return response;
+  }
+
+  private getIssueBody(issue: GitLabIssue): string {
+    let {taskURL, taskDescription} = issue;
+
+    return `Makeflow task reference: ${taskURL}\n${taskDescription}`;
   }
 }

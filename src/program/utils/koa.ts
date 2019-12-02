@@ -2,9 +2,7 @@ import {Middleware, ParameterizedContext} from 'koa';
 
 import {APIResponse, APIResponseError, ExpectedError} from '../core';
 
-export type APIHandler = (
-  ctx: ParameterizedContext,
-) => Promise<APIResponse | void>;
+export type APIHandler = (ctx: ParameterizedContext) => Promise<unknown | void>;
 
 export function requestProcessor(handler: APIHandler): Middleware {
   return async (ctx, next): Promise<any> => {
@@ -14,7 +12,7 @@ export function requestProcessor(handler: APIHandler): Middleware {
       let handledResult = await handler(ctx);
 
       if (handledResult) {
-        result = handledResult;
+        result = {data: handledResult};
       }
     } catch (error) {
       console.error(error);

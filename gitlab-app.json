@@ -3,6 +3,8 @@
   "displayName": "GitLab Issue Synchronizer",
   "description": "GitLub Issue Synchronizer for Makeflow",
   "version": "v0.1.1",
+  "permissions": ["task:update"],
+  "hookBaseURL": "http://issue-syncer.power.makeflow.io/gitlab-issue-synchronizer",
   "contributions": {
     "powerGlances": [
       {
@@ -95,6 +97,14 @@
             "bind": {
               "type": "variable",
               "variable": "task-ref"
+            }
+          },
+          {
+            "name": "task-url",
+            "displayName": "任务地址",
+            "bind": {
+              "type": "variable",
+              "variable": "task:url"
             }
           }
         ]

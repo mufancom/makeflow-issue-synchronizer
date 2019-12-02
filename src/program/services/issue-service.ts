@@ -13,13 +13,17 @@ import {PowerAppConfig, Resource} from '../types';
 import {checkRequiredConfigs} from '../utils';
 
 import {DBService} from './db-service';
+import {InstallationService} from './installation-service';
 import {LockService, LockServiceZookeeperLockPath} from './lock-service';
+import {MakeflowService} from './makeflow-service';
 
 const ISSUE_SYNC_CONCURRENCY = 5;
 
 type IssueAdapterDict = {[K in Issue['options']['type']]: IIssueAdapter};
 
 export interface IssueServiceSynchronizeIssuesOptions {
+  organization: string;
+  appInstallation: string;
   token: string;
   clock: number;
   resources: Resource[];
@@ -33,11 +37,18 @@ export class IssueService {
     gitlab: new GitLabIssueAdapter(),
   };
 
-  constructor(private dbService: DBService, private lockService: LockService) {}
+  constructor(
+    private installationService: InstallationService,
+    private makeflowService: MakeflowService,
+    private dbService: DBService,
+    private lockService: LockService,
+  ) {}
 
   async synchronizeIssuesFromConfig({
     token,
     clock,
+    organization: organizationId,
+    appInstallation: appInstallationId,
     resources,
     config,
     options,
@@ -65,6 +76,8 @@ export class IssueService {
             return {
               clock,
               task: id,
+              organization: organizationId,
+              appInstallation: appInstallationId,
               token,
               taskRef: inputs['task-ref'],
               tagsPattern: config['tags-pattern'],
@@ -74,8 +87,9 @@ export class IssueService {
               taskNodes: inputs['task-nodes'],
               taskDescription: inputs['task-description'],
               taskTags: inputs['task-tags'],
+              taskURL: inputs['task-url'],
               options,
-              removed,
+              removed: !!removed,
             } as Issue;
           },
         ),
@@ -102,7 +116,15 @@ export class IssueService {
         .collectionOfType('issue')
         .findOne(query);
 
-      let {token, clock, task: taskId, options, removed} = issue;
+      let {
+        token,
+        clock,
+        task: taskId,
+        options,
+        removed,
+        organization: organizationId,
+        appInstallation: appInstallationId,
+      } = issue;
 
       if (issueDoc) {
         await adapter.updateIssue(issue, issueDoc.issueNumber);
@@ -131,6 +153,24 @@ export class IssueService {
           task: taskId,
           options,
         } as IssueDocument);
+
+        let installation = await this.installationService.getActiveInstallation(
+          {
+            organization: organizationId,
+            appInstallation: appInstallationId,
+          },
+        );
+
+        if (installation && installation.accessToken) {
+          await this.makeflowService.addTaskOutputs(
+            taskId,
+            adapter.getTaskOutputsFromIssueNumber(issue, issueNumber),
+            {
+              baseURL: installation.makeflowBaseURL,
+              token: installation.accessToken,
+            },
+          );
+        }
       }
     } finally {
       if (lockPath) {

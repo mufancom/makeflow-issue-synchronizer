@@ -1,5 +1,3 @@
-import {Dict} from 'tslang';
-
 export enum HTTPStatusCode {
   Ok = 200,
   BadRequest = 400,
@@ -14,6 +12,6 @@ export interface APIResponseError {
 }
 
 export interface APIResponse {
-  data?: Dict<unknown>;
+  data?: unknown;
   error?: APIResponseError;
 }
