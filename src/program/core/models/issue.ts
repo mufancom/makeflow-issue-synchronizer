@@ -22,7 +22,7 @@ export type IssueProviderOptions =
 
 export interface IIssue {
   organization: string;
-  appInstallation: string;
+  installation: string;
   token: string;
   clock: number;
   taskRef: string;

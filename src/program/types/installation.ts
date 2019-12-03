@@ -1,6 +1,6 @@
 export interface Installation {
   organization: string;
-  appInstallation: string;
+  installation: string;
   makeflowBaseURL: string;
   active?: boolean;
   accessToken?: string;
@@ -8,5 +8,5 @@ export interface Installation {
 
 export interface InstallationIdentity {
   organization: string;
-  appInstallation: string;
+  installation: string;
 }

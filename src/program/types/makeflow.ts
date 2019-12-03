@@ -58,7 +58,7 @@ export interface MakeflowPowerGlanceApiBody<TConfig extends PowerAppConfig> {
   clock: number;
   token: string;
   organization: string;
-  appInstallation: string;
+  installation: string;
   resources: Resource[];
   initialize: boolean;
   configs: TConfig;
@@ -67,22 +67,22 @@ export interface MakeflowPowerGlanceApiBody<TConfig extends PowerAppConfig> {
 export interface MakeflowTouchInstallationBody {
   organization: string;
   team: string;
-  appInstallation: string;
-  baseURL: string;
+  installation: string;
+  url: string;
   token: string;
 }
 
 export interface MakeflowDeactivateInstallationBody {
   organization: string;
   team: string;
-  appInstallation: string;
+  installation: string;
   token: string;
 }
 
 export interface MakeflowGrantPermissionBody {
   organization: string;
   team: string;
-  appInstallation: string;
+  installation: string;
   token: string;
   accessToken: string;
 }
@@ -90,6 +90,6 @@ export interface MakeflowGrantPermissionBody {
 export interface MakeflowRevokePermissionBody {
   organization: string;
   team: string;
-  appInstallation: string;
+  installation: string;
   token: string;
 }

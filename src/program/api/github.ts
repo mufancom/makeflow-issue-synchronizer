@@ -16,7 +16,7 @@ export function routeGitHubIssueSynchronizer(
       let {
         name,
         organization: organizationId,
-        appInstallation: appInstallationId,
+        installation: installationId,
         token,
         clock,
         resources,
@@ -48,7 +48,7 @@ export function routeGitHubIssueSynchronizer(
 
       await issueService.synchronizeIssuesFromConfig({
         organization: organizationId,
-        appInstallation: appInstallationId,
+        installation: installationId,
         token,
         clock,
         resources,

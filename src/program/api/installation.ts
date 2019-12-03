@@ -19,14 +19,14 @@ export function routeInstallation(
     requestProcessor(async ctx => {
       let {
         organization: organizationId,
-        appInstallation: appInstallationId,
-        baseURL,
+        installation: installationId,
+        url,
       } = ctx.request.body as MakeflowTouchInstallationBody;
 
       let granted = await installationService.touchInstallation({
         organization: organizationId,
-        appInstallation: appInstallationId,
-        makeflowBaseURL: baseURL,
+        installation: installationId,
+        makeflowBaseURL: url,
       });
 
       return {
@@ -38,14 +38,12 @@ export function routeInstallation(
   apiRouter.post(
     '/:type(github|gitlab)-issue-synchronizer/installation/deactivate',
     requestProcessor(async ctx => {
-      let {
-        organization: organizationId,
-        appInstallation: appInstallationId,
-      } = ctx.request.body as MakeflowDeactivateInstallationBody;
+      let {organization: organizationId, installation: installationId} = ctx
+        .request.body as MakeflowDeactivateInstallationBody;
 
       await installationService.deactivateInstallation({
         organization: organizationId,
-        appInstallation: appInstallationId,
+        installation: installationId,
       });
     }),
   );
@@ -55,14 +53,14 @@ export function routeInstallation(
     requestProcessor(async ctx => {
       let {
         organization: organizationId,
-        appInstallation: appInstallationId,
+        installation: installationId,
         accessToken,
       } = ctx.request.body as MakeflowGrantPermissionBody;
 
       await installationService.grantPermission(
         {
           organization: organizationId,
-          appInstallation: appInstallationId,
+          installation: installationId,
         },
         accessToken,
       );
@@ -72,14 +70,12 @@ export function routeInstallation(
   apiRouter.post(
     '/:type(github|gitlab)-issue-synchronizer/permission/revoke',
     requestProcessor(async ctx => {
-      let {
-        organization: organizationId,
-        appInstallation: appInstallationId,
-      } = ctx.request.body as MakeflowRevokePermissionBody;
+      let {organization: organizationId, installation: installationId} = ctx
+        .request.body as MakeflowRevokePermissionBody;
 
       await installationService.revokePermission({
         organization: organizationId,
-        appInstallation: appInstallationId,
+        installation: installationId,
       });
     }),
   );
