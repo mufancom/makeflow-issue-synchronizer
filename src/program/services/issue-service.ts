@@ -23,7 +23,7 @@ type IssueAdapterDict = {[K in Issue['options']['type']]: IIssueAdapter};
 
 export interface IssueServiceSynchronizeIssuesOptions {
   organization: string;
-  appInstallation: string;
+  installation: string;
   token: string;
   clock: number;
   resources: Resource[];
@@ -48,7 +48,7 @@ export class IssueService {
     token,
     clock,
     organization: organizationId,
-    appInstallation: appInstallationId,
+    installation: installationId,
     resources,
     config,
     options,
@@ -77,7 +77,7 @@ export class IssueService {
               clock,
               task: id,
               organization: organizationId,
-              appInstallation: appInstallationId,
+              installation: installationId,
               token,
               taskRef: inputs['task-ref'],
               tagsPattern: config['tags-pattern'],
@@ -123,7 +123,7 @@ export class IssueService {
         options,
         removed,
         organization: organizationId,
-        appInstallation: appInstallationId,
+        installation: installationId,
       } = issue;
 
       if (issueDoc) {
@@ -157,7 +157,7 @@ export class IssueService {
         let installation = await this.installationService.getActiveInstallation(
           {
             organization: organizationId,
-            appInstallation: appInstallationId,
+            installation: installationId,
           },
         );
 

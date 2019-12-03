@@ -8,7 +8,7 @@ export class InstallationService {
 
   async touchInstallation({
     organization: organizationId,
-    appInstallation: appInstallationId,
+    installation: installationId,
     makeflowBaseURL,
   }: Installation): Promise<boolean> {
     let {value} = await this.dbService
@@ -16,7 +16,7 @@ export class InstallationService {
       .findOneAndUpdate(
         {
           organization: organizationId,
-          appInstallation: appInstallationId,
+          installation: installationId,
         },
         {
           $set: {
@@ -34,12 +34,12 @@ export class InstallationService {
 
   async deactivateInstallation({
     organization: organizationId,
-    appInstallation: appInstallationId,
+    installation: installationId,
   }: InstallationIdentity): Promise<void> {
     await this.dbService.collectionOfType('installation').updateOne(
       {
         organization: organizationId,
-        appInstallation: appInstallationId,
+        installation: installationId,
       },
       {$set: {active: false}, $unset: {accessToken: ''}},
     );
@@ -48,14 +48,14 @@ export class InstallationService {
   async grantPermission(
     {
       organization: organizationId,
-      appInstallation: appInstallationId,
+      installation: installationId,
     }: InstallationIdentity,
     accessToken: string,
   ): Promise<void> {
     await this.dbService.collectionOfType('installation').updateOne(
       {
         organization: organizationId,
-        appInstallation: appInstallationId,
+        installation: installationId,
       },
       {$set: {accessToken, active: true}},
     );
@@ -63,12 +63,12 @@ export class InstallationService {
 
   async revokePermission({
     organization: organizationId,
-    appInstallation: appInstallationId,
+    installation: installationId,
   }: InstallationIdentity): Promise<void> {
     await this.dbService.collectionOfType('installation').updateOne(
       {
         organization: organizationId,
-        appInstallation: appInstallationId,
+        installation: installationId,
       },
       {$unset: {accessToken: ''}},
     );
@@ -76,11 +76,11 @@ export class InstallationService {
 
   async getActiveInstallation({
     organization: organizationId,
-    appInstallation: appInstallationId,
+    installation: installationId,
   }: InstallationIdentity): Promise<Installation | undefined> {
     let doc = await this.dbService.collectionOfType('installation').findOne({
       organization: organizationId,
-      appInstallation: appInstallationId,
+      installation: installationId,
       active: true,
     });
 
