@@ -79,7 +79,6 @@ export class IssueService {
               organization: organizationId,
               installation: installationId,
               token,
-              taskRef: inputs['task-ref'],
               tagsPattern: config['tags-pattern'],
               stagesPattern: config['stages-pattern'],
               taskBrief: inputs['task-brief'],
@@ -88,6 +87,7 @@ export class IssueService {
               taskDescription: inputs['task-description'],
               taskTags: inputs['task-tags'],
               taskURL: inputs['task-url'],
+              taskMetadataSource: inputs['task-metadata-source'],
               options,
               removed: !!removed,
             } as Issue;

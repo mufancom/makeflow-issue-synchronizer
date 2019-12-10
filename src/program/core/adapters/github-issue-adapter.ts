@@ -34,11 +34,14 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
 
   analyzeIssueNumber(issue: GitHubIssue): number | undefined {
     let {
-      taskRef,
+      taskMetadataSource,
       options: {url, projectName},
     } = issue;
 
-    if (!taskRef || typeof taskRef !== 'string') {
+    let taskSourceType = taskMetadataSource && taskMetadataSource.type;
+    let taskSourceURL = taskMetadataSource && taskMetadataSource.url;
+
+    if (taskSourceType !== 'github' || typeof taskSourceURL !== 'string') {
       return undefined;
     }
 
@@ -46,7 +49,7 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
       `^${escapeStringRegExp(url)}\/${escapeStringRegExp(
         projectName,
       )}\/issues\/(\\d+)\/?$`,
-    ).exec(taskRef);
+    ).exec(taskSourceURL);
 
     if (!matchResult) {
       return undefined;
