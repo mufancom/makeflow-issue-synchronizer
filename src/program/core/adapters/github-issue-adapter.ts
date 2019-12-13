@@ -38,8 +38,8 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
       options: {url, projectName},
     } = issue;
 
-    let taskSourceType = taskMetadataSource && taskMetadataSource.type;
-    let taskSourceURL = taskMetadataSource && taskMetadataSource.url;
+    let taskSourceType = taskMetadataSource?.type;
+    let taskSourceURL = taskMetadataSource?.url;
 
     if (taskSourceType !== 'github' || typeof taskSourceURL !== 'string') {
       return undefined;

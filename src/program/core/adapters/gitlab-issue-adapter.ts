@@ -47,8 +47,8 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
       options: {url, projectName},
     } = issue;
 
-    let taskSourceType = taskMetadataSource && taskMetadataSource.type;
-    let taskSourceURL = taskMetadataSource && taskMetadataSource.url;
+    let taskSourceType = taskMetadataSource?.type;
+    let taskSourceURL = taskMetadataSource?.url;
 
     if (taskSourceType !== 'gitlab' || typeof taskSourceURL !== 'string') {
       return undefined;
