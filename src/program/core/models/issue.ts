@@ -1,6 +1,6 @@
 import {ObjectId} from 'mongodb';
 
-import {TaskNode, TaskStage, TaskTag} from '../../types';
+import {TaskMetadataSource, TaskNode, TaskStage, TaskTag} from '../../types';
 
 import {GitHubIssueProviderOptions} from './github';
 import {GitLabIssueProviderOptions} from './gitlab';
@@ -25,7 +25,6 @@ export interface IIssue {
   installation: string;
   token: string;
   clock: number;
-  taskRef: string;
   task: string;
   options: object;
   tagsPattern: string;
@@ -35,6 +34,7 @@ export interface IIssue {
   taskDescription: string;
   taskNodes: TaskNode[];
   taskTags: TaskTag[];
+  taskMetadataSource?: TaskMetadataSource;
   taskURL: string;
   removed: boolean;
 }

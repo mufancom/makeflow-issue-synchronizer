@@ -18,13 +18,18 @@ export interface TaskNode {
   stage: TaskNodeStage;
 }
 
+export interface TaskMetadataSource {
+  type: string;
+  url: string;
+}
+
 export interface ResourceInputs {
   'task-stage': TaskStage;
   'task-brief': string;
   'task-description': string;
   'task-tags': TaskTag[];
   'task-nodes': TaskNode[];
-  'task-ref': string;
+  'task-metadata-source'?: TaskMetadataSource;
   'task-url': string;
   disabled: boolean;
 }

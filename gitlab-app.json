@@ -92,11 +92,11 @@
             }
           },
           {
-            "name": "task-ref",
+            "name": "task-metadata-source",
             "displayName": "任务创建来源",
             "bind": {
               "type": "variable",
-              "variable": "task-ref"
+              "variable": "metadata:source"
             }
           },
           {

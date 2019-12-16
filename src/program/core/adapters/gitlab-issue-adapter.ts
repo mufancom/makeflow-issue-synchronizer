@@ -43,11 +43,14 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
 
   analyzeIssueNumber(issue: GitLabIssue): number | undefined {
     let {
-      taskRef,
+      taskMetadataSource,
       options: {url, projectName},
     } = issue;
 
-    if (!taskRef || typeof taskRef !== 'string') {
+    let taskSourceType = taskMetadataSource?.type;
+    let taskSourceURL = taskMetadataSource?.url;
+
+    if (taskSourceType !== 'gitlab' || typeof taskSourceURL !== 'string') {
       return undefined;
     }
 
@@ -55,7 +58,7 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
       `^${escapeStringRegExp(url)}\/${escapeStringRegExp(
         projectName,
       )}\/issues\/(\\d+)\/?$`,
-    ).exec(taskRef);
+    ).exec(taskSourceURL);
 
     if (!matchResult) {
       return undefined;
