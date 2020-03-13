@@ -3,8 +3,8 @@
   "compilerOptions": {
     "composite": true,
 
-    "types": ["node", "@makeflow/types-nominal/default"],
-    "lib": ["esnext", "DOM"],
+    "types": ["node"],
+    "lib": ["esnext"],
 
     "resolveJsonModule": true,
     "esModuleInterop": true,

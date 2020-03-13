@@ -91,7 +91,7 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
     let responseData = await response.json();
 
     if (response.status !== 201) {
-      throw new ExpectedError("UNEXPECTED_STATUS", `The response status for create gitlab issue is "${response.status}", but expected "201"`);
+      throw new Error(responseData.message);
     }
 
     let issueNumber = responseData.iid as number;
@@ -192,10 +192,6 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
 
     if (response.status === 401) {
       throw new ExpectedError('GITLAB_AUTHORIZE_FAILED');
-    }
-
-    if (response.status === 403) {
-      throw new ExpectedError('OPERATION_NOT_ALLOWED');
     }
 
     return response;

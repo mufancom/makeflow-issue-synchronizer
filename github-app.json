@@ -2,15 +2,16 @@
   "name": "makeflow-github-issue-synchronizer",
   "displayName": "GitHub Issue Synchronizer",
   "description": "GitHub Issue Synchronizer for Makeflow",
-  "version": "0.1.2",
+  "version": "0.1.1",
   "permissions": ["task:update"],
-  "hookBaseURL": "http://issue-syncer.power.makeflow.io/github",
+  "hookBaseURL": "http://issue-syncer.power.makeflow.io/github-issue-synchronizer",
   "contributions": {
     "powerGlances": [
       {
         "name": "github-issue-synchronizer",
         "displayName": "GitHub Issue Synchronizer",
         "description": "GitHub Issue Synchronizer for Makeflow",
+        "hookBaseURL": "http://issue-syncer.power.makeflow.io/github-issue-synchronizer",
         "configs": [
           {
             "field": "text",

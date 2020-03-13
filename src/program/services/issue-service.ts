@@ -9,14 +9,13 @@ import {
   IssueDocument,
   IssueProviderOptions,
 } from '../core';
-import {PowerAppConfig} from '../types';
+import {PowerAppConfig, Resource} from '../types';
 import {checkRequiredConfigs} from '../utils';
 
 import {DBService} from './db-service';
 import {InstallationService} from './installation-service';
 import {LockService, LockServiceZookeeperLockPath} from './lock-service';
 import {MakeflowService} from './makeflow-service';
-import {API} from '@makeflow/types';
 
 const ISSUE_SYNC_CONCURRENCY = 5;
 
@@ -27,7 +26,7 @@ export interface IssueServiceSynchronizeIssuesOptions {
   installation: string;
   token: string;
   clock: number;
-  resources: API.PowerGlance.ResourceEntry[];
+  resources: Resource[];
   config: PowerAppConfig;
   options: IssueProviderOptions;
 }
