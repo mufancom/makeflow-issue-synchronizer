@@ -1,12 +1,7 @@
+import {API} from '@makeflow/types';
 import Router from 'koa-router';
 
 import {InstallationService} from '../services';
-import {
-  MakeflowDeactivateInstallationBody,
-  MakeflowGrantPermissionBody,
-  MakeflowRevokePermissionBody,
-  MakeflowTouchInstallationBody,
-} from '../types';
 import {requestProcessor} from '../utils';
 
 export function routeInstallation(
@@ -15,13 +10,15 @@ export function routeInstallation(
 ): void {
   apiRouter.post(
     // TODO: Extract
-    '/:type(github|gitlab)-issue-synchronizer/installation/touch',
+    '/:type(github|gitlab)/installation/(activate|update)',
     requestProcessor(async ctx => {
       let {
+        source: {url},
         organization: organizationId,
         installation: installationId,
-        url,
-      } = ctx.request.body as MakeflowTouchInstallationBody;
+      } = ctx.request.body as
+        | API.PowerApp.InstallationUpdateHookParams
+        | API.PowerApp.InstallationActivateHookParams;
 
       let granted = await installationService.touchInstallation({
         organization: organizationId,
@@ -36,10 +33,10 @@ export function routeInstallation(
   );
 
   apiRouter.post(
-    '/:type(github|gitlab)-issue-synchronizer/installation/deactivate',
+    '/:type(github|gitlab)/installation/deactivate',
     requestProcessor(async ctx => {
       let {organization: organizationId, installation: installationId} = ctx
-        .request.body as MakeflowDeactivateInstallationBody;
+        .request.body as API.PowerApp.InstallationDeactivateHookParams;
 
       await installationService.deactivateInstallation({
         organization: organizationId,
@@ -49,13 +46,13 @@ export function routeInstallation(
   );
 
   apiRouter.post(
-    '/:type(github|gitlab)-issue-synchronizer/permission/grant',
+    '/:type(github|gitlab)/permission/grant',
     requestProcessor(async ctx => {
       let {
         organization: organizationId,
         installation: installationId,
         accessToken,
-      } = ctx.request.body as MakeflowGrantPermissionBody;
+      } = ctx.request.body as API.PowerApp.PermissionGrantHookParams;
 
       await installationService.grantPermission(
         {
@@ -68,10 +65,10 @@ export function routeInstallation(
   );
 
   apiRouter.post(
-    '/:type(github|gitlab)-issue-synchronizer/permission/revoke',
+    '/:type(github|gitlab)/permission/revoke',
     requestProcessor(async ctx => {
       let {organization: organizationId, installation: installationId} = ctx
-        .request.body as MakeflowRevokePermissionBody;
+        .request.body as API.PowerApp.PermissionRevokeHookParams;
 
       await installationService.revokePermission({
         organization: organizationId,

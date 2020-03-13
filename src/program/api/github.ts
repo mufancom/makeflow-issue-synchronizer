@@ -2,8 +2,9 @@ import Router from 'koa-router';
 
 import {ExpectedError} from '../core';
 import {IssueService} from '../services';
-import {GitHubPowerAppConfig, MakeflowPowerGlanceApiBody} from '../types';
+import {GitHubPowerAppConfig} from '../types';
 import {checkRequiredConfigs, requestProcessor} from '../utils';
+import {API} from '@makeflow/types';
 
 // TODO: Merge github and gitlab api
 export function routeGitHubIssueSynchronizer(
@@ -11,7 +12,7 @@ export function routeGitHubIssueSynchronizer(
   apiRouter: Router,
 ): void {
   apiRouter.post(
-    '/github-issue-synchronizer/notify',
+    '/github/power-glance/github-issue-synchronizer/(initialize|change)',
     requestProcessor(async ctx => {
       let {
         name,
@@ -21,15 +22,14 @@ export function routeGitHubIssueSynchronizer(
         clock,
         resources,
         configs,
-      } = ctx.request.body as MakeflowPowerGlanceApiBody<GitHubPowerAppConfig>;
+      } = ctx.request.body as
+        | API.PowerGlance.InitializeHookParams
+        | API.PowerGlance.UpdateHookParams;
+
+      let gitHubConfigs = configs as GitHubPowerAppConfig;
 
       console.info(
         'Received github issue synchronization request: ',
-        {
-          name,
-          token,
-          clock,
-        },
         resources,
       );
 
@@ -52,12 +52,12 @@ export function routeGitHubIssueSynchronizer(
         token,
         clock,
         resources,
-        config: configs,
+        config: gitHubConfigs,
         options: {
           type: 'github',
-          url: configs['github-url'],
-          token: configs['github-token'],
-          projectName: configs['github-project-name'],
+          url: gitHubConfigs['github-url'],
+          token: gitHubConfigs['github-token'],
+          projectName: gitHubConfigs['github-project-name'],
         },
       });
 

@@ -2,15 +2,16 @@ import Router from 'koa-router';
 
 import {ExpectedError} from '../core';
 import {IssueService} from '../services';
-import {GitLabPowerAppConfig, MakeflowPowerGlanceApiBody} from '../types';
+import {GitLabPowerAppConfig} from '../types';
 import {checkRequiredConfigs, requestProcessor} from '../utils';
+import {API} from '@makeflow/types';
 
 export function routeGitLabIssueSynchronizer(
   issueService: IssueService,
   apiRouter: Router,
 ): void {
   apiRouter.post(
-    '/gitlab-issue-synchronizer/notify',
+    '/gitlab/power-glance/gitlab-issue-synchronizer/(initialize|change)',
     requestProcessor(async ctx => {
       let {
         name,
@@ -20,15 +21,14 @@ export function routeGitLabIssueSynchronizer(
         clock,
         resources,
         configs,
-      } = ctx.request.body as MakeflowPowerGlanceApiBody<GitLabPowerAppConfig>;
+      } = ctx.request.body as
+        | API.PowerGlance.InitializeHookParams
+        | API.PowerGlance.UpdateHookParams;
+
+      let gitLabConfigs = configs as GitLabPowerAppConfig;
 
       console.info(
         'Received gitlab issue synchronization request: ',
-        {
-          name,
-          token,
-          clock,
-        },
         resources,
       );
 
@@ -51,12 +51,12 @@ export function routeGitLabIssueSynchronizer(
         token,
         clock,
         resources,
-        config: configs,
+        config: gitLabConfigs,
         options: {
           type: 'gitlab',
-          url: configs['gitlab-url'],
-          token: configs['gitlab-token'],
-          projectName: configs['gitlab-project-name'],
+          url: gitLabConfigs['gitlab-url'],
+          token: gitLabConfigs['gitlab-token'],
+          projectName: gitLabConfigs['gitlab-project-name'],
         },
       });
 
