@@ -24,11 +24,11 @@ export class LockService {
       retries: Infinity,
     });
 
-    client.connect();
-
     client.on('connected', () =>
       console.info('Lock service zookeeper client connected.'),
     );
+
+    client.connect();
 
     this.client = client;
   }
