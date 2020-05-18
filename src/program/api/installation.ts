@@ -13,9 +13,11 @@ export function routeInstallation(
     '/:type(github|gitlab)/installation/(activate|update)',
     requestProcessor(async ctx => {
       let {
-        source: {url},
-        organization: organizationId,
-        installation: installationId,
+        source: {
+          url,
+          organization: organizationId,
+          installation: installationId,
+        },
       } = ctx.request.body as
         | API.PowerApp.InstallationUpdateHookParams
         | API.PowerApp.InstallationActivateHookParams;
@@ -35,8 +37,9 @@ export function routeInstallation(
   apiRouter.post(
     '/:type(github|gitlab)/installation/deactivate',
     requestProcessor(async ctx => {
-      let {organization: organizationId, installation: installationId} = ctx
-        .request.body as API.PowerApp.InstallationDeactivateHookParams;
+      let {
+        source: {organization: organizationId, installation: installationId},
+      } = ctx.request.body as API.PowerApp.InstallationDeactivateHookParams;
 
       await installationService.deactivateInstallation({
         organization: organizationId,
@@ -49,8 +52,7 @@ export function routeInstallation(
     '/:type(github|gitlab)/permission/grant',
     requestProcessor(async ctx => {
       let {
-        organization: organizationId,
-        installation: installationId,
+        source: {organization: organizationId, installation: installationId},
         accessToken,
       } = ctx.request.body as API.PowerApp.PermissionGrantHookParams;
 
@@ -67,8 +69,9 @@ export function routeInstallation(
   apiRouter.post(
     '/:type(github|gitlab)/permission/revoke',
     requestProcessor(async ctx => {
-      let {organization: organizationId, installation: installationId} = ctx
-        .request.body as API.PowerApp.PermissionRevokeHookParams;
+      let {
+        source: {organization: organizationId, installation: installationId},
+      } = ctx.request.body as API.PowerApp.PermissionRevokeHookParams;
 
       await installationService.revokePermission({
         organization: organizationId,
