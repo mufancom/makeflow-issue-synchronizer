@@ -155,8 +155,8 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
     url.pathname = `${issue.options.projectName}/issues/${issueNumber}`;
 
     return {
-      'gitlab:issue:id': issueNumber,
-      'gitlab:issue:url': url.toString(),
+      'gitlab_issue_id': issueNumber,
+      'gitlab_issue_url': url.toString(),
     };
   }
 

@@ -95,7 +95,7 @@
             "displayName": "任务创建来源",
             "bind": {
               "type": "variable",
-              "variable": "metadataSource"
+              "variable": "metadata_source"
             }
           },
           {
