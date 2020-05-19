@@ -1,0 +1,25 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:latest
+    volumes:
+      - makeflow-issue-synchronizer_mongo_data:/data/db/
+
+  zookeeper:
+    image: zookeeper:latest
+
+  makeflow_issue_synchronizer:
+    image: makeflow-issue-synchronizer:latest
+    build:
+      context: .
+      args:
+        - HTTP_PROXY
+    depends_on:
+      - mongo
+      - zookeeper
+    ports:
+      - '8888:8080'
+
+volumes:
+  makeflow-issue-synchronizer_mongo_data:
+    external: true
