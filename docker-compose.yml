@@ -9,7 +9,7 @@ services:
     image: zookeeper:latest
 
   makeflow_issue_synchronizer:
-    image: makeflow-issue-synchronizer:latest
+    image: makeflow-issue-synchronizer:${VERSION:-latest}
     build:
       context: .
       args:
