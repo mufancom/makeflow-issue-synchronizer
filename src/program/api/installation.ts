@@ -22,6 +22,10 @@ export function routeInstallation(
         | API.PowerApp.InstallationUpdateHookParams
         | API.PowerApp.InstallationActivateHookParams;
 
+      console.info(
+        `touching installation "${installationId}" from "${organizationId}"`,
+      );
+
       let granted = await installationService.touchInstallation({
         organization: organizationId,
         installation: installationId,
@@ -41,6 +45,10 @@ export function routeInstallation(
         source: {organization: organizationId, installation: installationId},
       } = ctx.request.body as API.PowerApp.InstallationDeactivateHookParams;
 
+      console.info(
+        `deactivating installation "${installationId}" from "${organizationId}"`,
+      );
+
       await installationService.deactivateInstallation({
         organization: organizationId,
         installation: installationId,
@@ -55,6 +63,10 @@ export function routeInstallation(
         source: {organization: organizationId, installation: installationId},
         accessToken,
       } = ctx.request.body as API.PowerApp.PermissionGrantHookParams;
+
+      console.info(
+        `granted permission for installation "${installationId}" from "${organizationId}"`,
+      );
 
       await installationService.grantPermission(
         {
@@ -72,6 +84,10 @@ export function routeInstallation(
       let {
         source: {organization: organizationId, installation: installationId},
       } = ctx.request.body as API.PowerApp.PermissionRevokeHookParams;
+
+      console.info(
+        `revoked permission for installation "${installationId}" from "${organizationId}"`,
+      );
 
       await installationService.revokePermission({
         organization: organizationId,

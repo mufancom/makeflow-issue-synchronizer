@@ -4,7 +4,7 @@
   "description": "GitHub Issue Synchronizer for Makeflow",
   "version": "0.1.3",
   "permissions": ["task:update"],
-  "hookBaseURL": "http://issue-syncer.power.makeflow.io/github",
+  "hookBaseURL": "http://power-apps.makeflow.com/issue-syncer/github",
   "contributions": {
     "powerGlances": [
       {
