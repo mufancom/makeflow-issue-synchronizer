@@ -2,9 +2,9 @@
   "name": "makeflow-gitlab-issue-synchronizer",
   "displayName": "GitLab Issue Synchronizer",
   "description": "GitLub Issue Synchronizer for Makeflow",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "permissions": ["task:update"],
-  "hookBaseURL": "http://power-apps.makeflow.com/issue-syncer/gitlab",
+  "hookBaseURL": "http://power-apps.makeflow.com/issue-synchronizer/gitlab",
   "contributions": {
     "powerGlances": [
       {
