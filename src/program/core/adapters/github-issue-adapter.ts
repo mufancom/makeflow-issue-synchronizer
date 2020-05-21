@@ -126,8 +126,8 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
     url.pathname = `${issue.options.projectName}/issues/${issueNumber}`;
 
     return {
-      'github:issue:id': issueNumber,
-      'github:issue:url': url.toString(),
+      'github_issue_id': issueNumber,
+      'github_issue_url': url.toString(),
     };
   }
 

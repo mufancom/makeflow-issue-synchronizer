@@ -1,10 +1,10 @@
+import {API} from '@makeflow/types';
 import Router from 'koa-router';
 
 import {ExpectedError} from '../core';
 import {IssueService} from '../services';
 import {GitHubPowerAppConfig} from '../types';
 import {checkRequiredConfigs, requestProcessor} from '../utils';
-import {API} from '@makeflow/types';
 
 // TODO: Merge github and gitlab api
 export function routeGitHubIssueSynchronizer(
@@ -16,8 +16,7 @@ export function routeGitHubIssueSynchronizer(
     requestProcessor(async ctx => {
       let {
         name,
-        organization: organizationId,
-        installation: installationId,
+        source: {organization: organizationId, installation: installationId},
         token,
         clock,
         resources,

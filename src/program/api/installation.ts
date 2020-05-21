@@ -13,12 +13,18 @@ export function routeInstallation(
     '/:type(github|gitlab)/installation/(activate|update)',
     requestProcessor(async ctx => {
       let {
-        source: {url},
-        organization: organizationId,
-        installation: installationId,
+        source: {
+          url,
+          organization: organizationId,
+          installation: installationId,
+        },
       } = ctx.request.body as
         | API.PowerApp.InstallationUpdateHookParams
         | API.PowerApp.InstallationActivateHookParams;
+
+      console.info(
+        `touching installation "${installationId}" from "${organizationId}"`,
+      );
 
       let granted = await installationService.touchInstallation({
         organization: organizationId,
@@ -35,8 +41,13 @@ export function routeInstallation(
   apiRouter.post(
     '/:type(github|gitlab)/installation/deactivate',
     requestProcessor(async ctx => {
-      let {organization: organizationId, installation: installationId} = ctx
-        .request.body as API.PowerApp.InstallationDeactivateHookParams;
+      let {
+        source: {organization: organizationId, installation: installationId},
+      } = ctx.request.body as API.PowerApp.InstallationDeactivateHookParams;
+
+      console.info(
+        `deactivating installation "${installationId}" from "${organizationId}"`,
+      );
 
       await installationService.deactivateInstallation({
         organization: organizationId,
@@ -49,10 +60,13 @@ export function routeInstallation(
     '/:type(github|gitlab)/permission/grant',
     requestProcessor(async ctx => {
       let {
-        organization: organizationId,
-        installation: installationId,
+        source: {organization: organizationId, installation: installationId},
         accessToken,
       } = ctx.request.body as API.PowerApp.PermissionGrantHookParams;
+
+      console.info(
+        `granted permission for installation "${installationId}" from "${organizationId}"`,
+      );
 
       await installationService.grantPermission(
         {
@@ -67,8 +81,13 @@ export function routeInstallation(
   apiRouter.post(
     '/:type(github|gitlab)/permission/revoke',
     requestProcessor(async ctx => {
-      let {organization: organizationId, installation: installationId} = ctx
-        .request.body as API.PowerApp.PermissionRevokeHookParams;
+      let {
+        source: {organization: organizationId, installation: installationId},
+      } = ctx.request.body as API.PowerApp.PermissionRevokeHookParams;
+
+      console.info(
+        `revoked permission for installation "${installationId}" from "${organizationId}"`,
+      );
 
       await installationService.revokePermission({
         organization: organizationId,

@@ -1,10 +1,10 @@
+import {API} from '@makeflow/types';
 import Router from 'koa-router';
 
 import {ExpectedError} from '../core';
 import {IssueService} from '../services';
 import {GitLabPowerAppConfig} from '../types';
 import {checkRequiredConfigs, requestProcessor} from '../utils';
-import {API} from '@makeflow/types';
 
 export function routeGitLabIssueSynchronizer(
   issueService: IssueService,
@@ -15,8 +15,7 @@ export function routeGitLabIssueSynchronizer(
     requestProcessor(async ctx => {
       let {
         name,
-        organization: organizationId,
-        installation: installationId,
+        source: {organization: organizationId, installation: installationId},
         token,
         clock,
         resources,
