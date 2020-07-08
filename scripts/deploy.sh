@@ -3,6 +3,8 @@ pwd
 
 VERSION=${1:-$(date +%s)};
 
+source .env
+
 echo "deploying '$VERSION' of makeflow issue synchronizer..."
 
 VERSION=$VERSION SOCKS_PROXY=$SOCKS_PROXY docker-compose build
