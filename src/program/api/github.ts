@@ -20,12 +20,12 @@ export function routeGitHubIssueSynchronizer(
         token,
         clock,
         resources,
-        configs,
+        powerGlanceConfigs,
       } = ctx.request.body as
         | API.PowerGlance.InitializeHookParams
         | API.PowerGlance.UpdateHookParams;
 
-      let gitHubConfigs = configs as GitHubPowerAppConfig;
+      let gitHubConfigs = powerGlanceConfigs as GitHubPowerAppConfig;
 
       console.info(
         'Received github issue synchronization request: ',
@@ -33,7 +33,7 @@ export function routeGitHubIssueSynchronizer(
       );
 
       checkRequiredConfigs(
-        configs,
+        powerGlanceConfigs,
         ['github-url', 'github-token', 'github-project-name'],
         'GitHub issue synchronizer inputs',
       );

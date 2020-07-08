@@ -10,26 +10,24 @@ export class InstallationService {
     organization: organizationId,
     installation: installationId,
     makeflowBaseURL,
-  }: Installation): Promise<boolean> {
-    let {value} = await this.dbService
-      .collectionOfType('installation')
-      .findOneAndUpdate(
-        {
-          organization: organizationId,
-          installation: installationId,
+    accessToken,
+  }: Installation): Promise<void> {
+    await this.dbService.collectionOfType('installation').findOneAndUpdate(
+      {
+        organization: organizationId,
+        installation: installationId,
+      },
+      {
+        $set: {
+          makeflowBaseURL,
+          active: true,
+          accessToken,
         },
-        {
-          $set: {
-            makeflowBaseURL,
-            active: true,
-          },
-        },
-        {
-          upsert: true,
-        },
-      );
-
-    return !!value && !!value.accessToken;
+      },
+      {
+        upsert: true,
+      },
+    );
   }
 
   async deactivateInstallation({
@@ -42,35 +40,6 @@ export class InstallationService {
         installation: installationId,
       },
       {$set: {active: false}, $unset: {accessToken: ''}},
-    );
-  }
-
-  async grantPermission(
-    {
-      organization: organizationId,
-      installation: installationId,
-    }: InstallationIdentity,
-    accessToken: string,
-  ): Promise<void> {
-    await this.dbService.collectionOfType('installation').updateOne(
-      {
-        organization: organizationId,
-        installation: installationId,
-      },
-      {$set: {accessToken, active: true}},
-    );
-  }
-
-  async revokePermission({
-    organization: organizationId,
-    installation: installationId,
-  }: InstallationIdentity): Promise<void> {
-    await this.dbService.collectionOfType('installation').updateOne(
-      {
-        organization: organizationId,
-        installation: installationId,
-      },
-      {$unset: {accessToken: ''}},
     );
   }
 

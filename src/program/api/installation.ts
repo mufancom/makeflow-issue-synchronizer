@@ -18,6 +18,7 @@ export function routeInstallation(
           organization: organizationId,
           installation: installationId,
         },
+        accessToken,
       } = ctx.request.body as
         | API.PowerApp.InstallationUpdateHookParams
         | API.PowerApp.InstallationActivateHookParams;
@@ -26,15 +27,12 @@ export function routeInstallation(
         `touching installation "${installationId}" from "${organizationId}"`,
       );
 
-      let granted = await installationService.touchInstallation({
+      await installationService.touchInstallation({
         organization: organizationId,
         installation: installationId,
         makeflowBaseURL: url,
+        accessToken,
       });
-
-      return {
-        granted,
-      };
     }),
   );
 
@@ -50,46 +48,6 @@ export function routeInstallation(
       );
 
       await installationService.deactivateInstallation({
-        organization: organizationId,
-        installation: installationId,
-      });
-    }),
-  );
-
-  apiRouter.post(
-    '/:type(github|gitlab)/permission/grant',
-    requestProcessor(async ctx => {
-      let {
-        source: {organization: organizationId, installation: installationId},
-        accessToken,
-      } = ctx.request.body as API.PowerApp.PermissionGrantHookParams;
-
-      console.info(
-        `granted permission for installation "${installationId}" from "${organizationId}"`,
-      );
-
-      await installationService.grantPermission(
-        {
-          organization: organizationId,
-          installation: installationId,
-        },
-        accessToken,
-      );
-    }),
-  );
-
-  apiRouter.post(
-    '/:type(github|gitlab)/permission/revoke',
-    requestProcessor(async ctx => {
-      let {
-        source: {organization: organizationId, installation: installationId},
-      } = ctx.request.body as API.PowerApp.PermissionRevokeHookParams;
-
-      console.info(
-        `revoked permission for installation "${installationId}" from "${organizationId}"`,
-      );
-
-      await installationService.revokePermission({
         organization: organizationId,
         installation: installationId,
       });

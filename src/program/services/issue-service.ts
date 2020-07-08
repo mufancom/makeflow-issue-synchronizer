@@ -1,3 +1,4 @@
+import {API} from '@makeflow/types';
 import * as v from 'villa';
 
 import {
@@ -16,7 +17,6 @@ import {DBService} from './db-service';
 import {InstallationService} from './installation-service';
 import {LockService, LockServiceZookeeperLockPath} from './lock-service';
 import {MakeflowService} from './makeflow-service';
-import {API} from '@makeflow/types';
 
 const ISSUE_SYNC_CONCURRENCY = 5;
 

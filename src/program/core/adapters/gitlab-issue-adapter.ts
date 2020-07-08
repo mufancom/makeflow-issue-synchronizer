@@ -5,6 +5,7 @@ import {FilterQuery} from 'mongodb';
 import fetch, {Response} from 'node-fetch';
 import {Dict} from 'tslang';
 
+import { getAgent } from '../../utils';
 import {ExpectedError} from '../error';
 import {GitLabIssue, IssueDocument} from '../models';
 
@@ -188,6 +189,7 @@ export class GitLabIssueAdapter extends AbstractIssueAdapter<GitLabIssue> {
         'Private-Token': token,
       },
       body: method !== 'get' ? body : undefined,
+      agent: getAgent(),
     });
 
     if (response.status === 401) {
