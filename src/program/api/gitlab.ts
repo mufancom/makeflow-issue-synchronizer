@@ -19,12 +19,12 @@ export function routeGitLabIssueSynchronizer(
         token,
         clock,
         resources,
-        configs,
+        powerGlanceConfigs,
       } = ctx.request.body as
         | API.PowerGlance.InitializeHookParams
         | API.PowerGlance.UpdateHookParams;
 
-      let gitLabConfigs = configs as GitLabPowerAppConfig;
+      let gitLabConfigs = powerGlanceConfigs as GitLabPowerAppConfig;
 
       console.info(
         'Received gitlab issue synchronization request: ',
@@ -32,7 +32,7 @@ export function routeGitLabIssueSynchronizer(
       );
 
       checkRequiredConfigs(
-        configs,
+        powerGlanceConfigs,
         ['gitlab-url', 'gitlab-token', 'gitlab-project-name'],
         'GitLab issue synchronizer inputs',
       );

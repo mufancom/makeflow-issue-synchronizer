@@ -13,12 +13,14 @@ services:
     build:
       context: .
       args:
-        - HTTP_PROXY
+        - SOCKS_PROXY
     depends_on:
       - mongo
       - zookeeper
     ports:
       - '8888:8080'
+    environment:
+      - SOCKS_PROXY
 
 volumes:
   makeflow-issue-synchronizer_mongo_data:

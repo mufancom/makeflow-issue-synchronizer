@@ -5,6 +5,7 @@ import escapeStringRegExp from 'escape-string-regexp';
 import {FilterQuery} from 'mongodb';
 import {Dict} from 'tslang';
 
+import { getAgent } from '../../utils';
 import {ExpectedError} from '../error';
 import {GitHubIssue, IssueDocument} from '../models';
 
@@ -159,6 +160,9 @@ export class GitHubIssueAdapter extends AbstractIssueAdapter<GitHubIssue> {
     return new Octokit({
       baseUrl: apiBaseURL,
       auth: token,
+      request: {
+        agent: getAgent(),
+      }
     });
   }
 

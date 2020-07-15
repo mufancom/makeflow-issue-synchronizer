@@ -33,3 +33,5 @@ debug/
 # Testing files
 
 /test.*
+
+.env
