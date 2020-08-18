@@ -16,7 +16,10 @@ export function routeGitHubIssueSynchronizer(
     requestProcessor(async ctx => {
       let {
         name,
-        source: {organization: organizationId, installation: installationId},
+        source: {
+          organization: originalOrganization,
+          installation: originalInstallation,
+        },
         token,
         clock,
         resources,
@@ -24,6 +27,16 @@ export function routeGitHubIssueSynchronizer(
       } = ctx.request.body as
         | API.PowerGlance.InitializeHookParams
         | API.PowerGlance.UpdateHookParams;
+
+      // TODO: remove while makeflow updated
+      let organizationId =
+        typeof originalOrganization === 'string'
+          ? originalOrganization
+          : originalOrganization.id;
+      let installationId =
+        typeof originalInstallation === 'string'
+          ? originalInstallation
+          : originalInstallation.id;
 
       let gitHubConfigs = powerGlanceConfigs as GitHubPowerAppConfig;
 

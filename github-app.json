@@ -2,7 +2,7 @@
   "name": "makeflow-github-issue-synchronizer",
   "displayName": "GitHub Issue Synchronizer",
   "description": "GitHub Issue Synchronizer for Makeflow",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "permissions": ["task:update"],
   "hookBaseURL": "https://power-apps.makeflow.com/issue-synchronizer/github",
   "contributions": {

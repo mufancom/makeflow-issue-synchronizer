@@ -15,13 +15,23 @@ export function routeInstallation(
       let {
         source: {
           url,
-          organization: organizationId,
-          installation: installationId,
+          organization: originalOrganization,
+          installation: originalInstallation,
         },
         accessToken,
       } = ctx.request.body as
         | API.PowerApp.InstallationUpdateHookParams
         | API.PowerApp.InstallationActivateHookParams;
+
+      // TODO: remove while makeflow updated
+      let organizationId =
+        typeof originalOrganization === 'string'
+          ? originalOrganization
+          : originalOrganization.id;
+      let installationId =
+        typeof originalInstallation === 'string'
+          ? originalInstallation
+          : originalInstallation.id;
 
       console.info(
         `touching installation "${installationId}" from "${organizationId}"`,
@@ -40,8 +50,21 @@ export function routeInstallation(
     '/:type(github|gitlab)/installation/deactivate',
     requestProcessor(async ctx => {
       let {
-        source: {organization: organizationId, installation: installationId},
+        source: {
+          organization: originalOrganization,
+          installation: originalInstallation,
+        },
       } = ctx.request.body as API.PowerApp.InstallationDeactivateHookParams;
+
+      // TODO: remove while makeflow updated
+      let organizationId =
+        typeof originalOrganization === 'string'
+          ? originalOrganization
+          : originalOrganization.id;
+      let installationId =
+        typeof originalInstallation === 'string'
+          ? originalInstallation
+          : originalInstallation.id;
 
       console.info(
         `deactivating installation "${installationId}" from "${organizationId}"`,
