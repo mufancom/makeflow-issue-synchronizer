@@ -21,6 +21,9 @@ services:
       - '8888:8080'
     environment:
       - SOCKS_PROXY
+    extra_hosts:
+      - 'internal.makeflow.io:47.107.33.195'
+      - 'staging.makeflow.io:47.107.33.195'
 
 volumes:
   makeflow-issue-synchronizer_mongo_data:

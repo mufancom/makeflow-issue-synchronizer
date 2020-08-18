@@ -1,4 +1,5 @@
-#!/bin/sh
+set -e
+
 pwd
 
 VERSION=${1:-$(date +%s)};
