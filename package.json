@@ -42,7 +42,7 @@
     "lodash": "^4.17.19",
     "mime": "^2.4.2",
     "mongodb": "^3.2.3",
-    "node-fetch": "^2.3.0",
+    "node-fetch": "^2.6.1",
     "node-zookeeper-client": "^0.2.3",
     "socks-proxy-agent": "^5.0.0",
     "tslang": "^0.1.13",
